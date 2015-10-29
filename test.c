@@ -602,8 +602,9 @@ static char __pyx_k_pystr[] = "pystr";
 static char __pyx_k_main_2[] = "main";
 static char __pyx_k_test_2[] = "__test__";
 static char __pyx_k_Hello_World[] = "Hello World!";
-static char __pyx_k_It_s_nice_to_see_you[] = "\nIt's nice to see you!\n";
+static char __pyx_k_It_s_nice_to_see_you[] = "\nIt's nice to see you!\n\n\n";
 static char __pyx_k_home_ubuntu_workspace_test_pyx[] = "/home/ubuntu/workspace/test.pyx";
+static char __pyx_k_We_have_to_go_back_To_the_future[] = "We have to go back...\n\n\nTo the future!!!\n";
 static PyObject *__pyx_kp_s_It_s_nice_to_see_you;
 static PyObject *__pyx_kp_s_home_ubuntu_workspace_test_pyx;
 static PyObject *__pyx_n_s_main;
@@ -653,7 +654,7 @@ static PyObject *__pyx_pf_4test_main(CYTHON_UNUSED PyObject *__pyx_self) {
  * def main():
  *     cdef char* test = "Hello World!"             # <<<<<<<<<<<<<<
  *     pystr = test
- *     pystr += "\nIt's nice to see you!\n"
+ *     pystr += "\nIt's nice to see you!\n\n\n"
  */
   __pyx_v_test = __pyx_k_Hello_World;
 
@@ -661,7 +662,7 @@ static PyObject *__pyx_pf_4test_main(CYTHON_UNUSED PyObject *__pyx_self) {
  * def main():
  *     cdef char* test = "Hello World!"
  *     pystr = test             # <<<<<<<<<<<<<<
- *     pystr += "\nIt's nice to see you!\n"
+ *     pystr += "\nIt's nice to see you!\n\n\n"
  *     test = pystr
  */
   __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_test); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 4; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -672,7 +673,7 @@ static PyObject *__pyx_pf_4test_main(CYTHON_UNUSED PyObject *__pyx_self) {
   /* "test.pyx":5
  *     cdef char* test = "Hello World!"
  *     pystr = test
- *     pystr += "\nIt's nice to see you!\n"             # <<<<<<<<<<<<<<
+ *     pystr += "\nIt's nice to see you!\n\n\n"             # <<<<<<<<<<<<<<
  *     test = pystr
  *     printf(test)
  */
@@ -683,21 +684,30 @@ static PyObject *__pyx_pf_4test_main(CYTHON_UNUSED PyObject *__pyx_self) {
 
   /* "test.pyx":6
  *     pystr = test
- *     pystr += "\nIt's nice to see you!\n"
+ *     pystr += "\nIt's nice to see you!\n\n\n"
  *     test = pystr             # <<<<<<<<<<<<<<
  *     printf(test)
- * main()
+ *     printf("We have to go back...\n\n\nTo the future!!!\n")
  */
   __pyx_t_2 = __Pyx_PyObject_AsString(__pyx_v_pystr); if (unlikely((!__pyx_t_2) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_test = __pyx_t_2;
 
   /* "test.pyx":7
- *     pystr += "\nIt's nice to see you!\n"
+ *     pystr += "\nIt's nice to see you!\n\n\n"
  *     test = pystr
  *     printf(test)             # <<<<<<<<<<<<<<
+ *     printf("We have to go back...\n\n\nTo the future!!!\n")
  * main()
  */
   printf(__pyx_v_test);
+
+  /* "test.pyx":8
+ *     test = pystr
+ *     printf(test)
+ *     printf("We have to go back...\n\n\nTo the future!!!\n")             # <<<<<<<<<<<<<<
+ * main()
+ */
+  printf(__pyx_k_We_have_to_go_back_To_the_future);
 
   /* "test.pyx":2
  * from libc.stdio cimport *
@@ -891,12 +901,12 @@ PyMODINIT_FUNC PyInit_test(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_main_2, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "test.pyx":8
- *     test = pystr
+  /* "test.pyx":9
  *     printf(test)
+ *     printf("We have to go back...\n\n\nTo the future!!!\n")
  * main()             # <<<<<<<<<<<<<<
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_main_2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 8; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_main_2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 9; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -909,10 +919,10 @@ PyMODINIT_FUNC PyInit_test(void)
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 8; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 9; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 8; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 9; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
