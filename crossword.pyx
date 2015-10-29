@@ -9,5 +9,5 @@ def makeBoard():
     # We want to weight the fillIns more, so that they occur more often than the chars.
     # cdef struct for the board
     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
-    # Randomly assign thw fillIns and the chars
+    # Randomly assign thw fillIns and then the chars
     pass
