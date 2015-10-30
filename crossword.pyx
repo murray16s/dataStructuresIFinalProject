@@ -1,7 +1,6 @@
 from libc.stdio cimport *
 from math import *
 from random import randint
-from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 from libc.stdlib cimport malloc, free
 
 cdef struct space:
