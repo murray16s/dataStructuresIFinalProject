@@ -246,6 +246,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #define __PYX_HAVE_API__crossword
 #include "string.h"
 #include "stdio.h"
+#include "stdlib.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -458,6 +459,30 @@ static const char *__pyx_f[] = {
 };
 
 /*--- Type declarations ---*/
+struct __pyx_t_9crossword_space;
+
+/* "crossword.pyx":7
+ * from libc.stdlib cimport malloc, free
+ * 
+ * cdef struct space:             # <<<<<<<<<<<<<<
+ *     int row
+ *     int column
+ */
+struct __pyx_t_9crossword_space {
+  int row;
+  int column;
+  char value;
+  int charType;
+};
+
+/* "crossword.pyx":12
+ *     char value
+ *     int charType
+ * ctypedef space spaces             # <<<<<<<<<<<<<<
+ * 
+ * def makeBoard():
+ */
+typedef struct __pyx_t_9crossword_space __pyx_t_9crossword_spaces;
 
 /* --- Runtime support code (head) --- */
 #ifndef CYTHON_REFNANNY
@@ -537,7 +562,38 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 #define __Pyx_PyObject_GetAttrStr(o,n) PyObject_GetAttr(o,n)
 #endif
 
+static PyObject *__Pyx_GetBuiltinName(PyObject *name);
+
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
+#else
+#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
+#else
+#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
+#endif
+
+static CYTHON_INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb);
+static CYTHON_INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyObject **tb);
+
+static void __Pyx_WriteUnraisable(const char *name, int clineno,
+                                  int lineno, const char *filename,
+                                  int full_traceback, int nogil);
+
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
+
+static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 
 typedef struct {
     int code_line;
@@ -556,11 +612,11 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object);
 static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
-
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
 
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 static CYTHON_INLINE int __Pyx_StrEq(const char *, const char *);
 
@@ -573,11 +629,17 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from 'libc.stdio' */
 
+/* Module declarations from 'cpython.mem' */
+
+/* Module declarations from 'libc.stdlib' */
+
 /* Module declarations from 'crossword' */
+static int __pyx_f_9crossword_main(void); /*proto*/
 #define __Pyx_MODULE_NAME "crossword"
 int __pyx_module_is_main_crossword = 0;
 
 /* Implementation of 'crossword' */
+static PyObject *__pyx_builtin_range;
 static char __pyx_k_[] = "_";
 static char __pyx_k_a[] = "a";
 static char __pyx_k_b[] = "b";
@@ -606,21 +668,29 @@ static char __pyx_k_x[] = "x";
 static char __pyx_k_y[] = "y";
 static char __pyx_k_z[] = "z";
 static char __pyx_k__2[] = "#";
-static char __pyx_k__3[] = "*";
+static char __pyx_k__4[] = "*";
+static char __pyx_k_val[] = "val";
 static char __pyx_k_char[] = "char";
 static char __pyx_k_main[] = "__main__";
 static char __pyx_k_math[] = "math";
+static char __pyx_k_temp[] = "temp";
 static char __pyx_k_test[] = "__test__";
+static char __pyx_k_board[] = "board";
+static char __pyx_k_range[] = "range";
 static char __pyx_k_import[] = "__import__";
+static char __pyx_k_random[] = "random";
 static char __pyx_k_fillIns[] = "fillIns";
+static char __pyx_k_randint[] = "randint";
 static char __pyx_k_crossword[] = "crossword";
 static char __pyx_k_makeBoard[] = "makeBoard";
+static char __pyx_k_The_value_of_space_d_is_d[] = "The value of space %d is: %d\n";
 static char __pyx_k_home_ubuntu_workspace_crossword[] = "/home/ubuntu/workspace/crossword.pyx";
 static PyObject *__pyx_n_s_;
 static PyObject *__pyx_kp_s__2;
-static PyObject *__pyx_n_s__3;
+static PyObject *__pyx_n_s__4;
 static PyObject *__pyx_n_s_a;
 static PyObject *__pyx_n_s_b;
+static PyObject *__pyx_n_s_board;
 static PyObject *__pyx_n_s_c;
 static PyObject *__pyx_n_s_char;
 static PyObject *__pyx_n_s_crossword;
@@ -645,59 +715,30 @@ static PyObject *__pyx_n_s_o;
 static PyObject *__pyx_n_s_p;
 static PyObject *__pyx_n_s_q;
 static PyObject *__pyx_n_s_r;
+static PyObject *__pyx_n_s_randint;
+static PyObject *__pyx_n_s_random;
+static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_s;
 static PyObject *__pyx_n_s_t;
+static PyObject *__pyx_n_s_temp;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_u;
 static PyObject *__pyx_n_s_v;
+static PyObject *__pyx_n_s_val;
 static PyObject *__pyx_n_s_w;
 static PyObject *__pyx_n_s_x;
 static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_z;
 static PyObject *__pyx_pf_9crossword_makeBoard(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_tuple__4;
-static PyObject *__pyx_codeobj__5;
+static PyObject *__pyx_int_1;
+static PyObject *__pyx_int_10;
+static PyObject *__pyx_tuple__3;
+static PyObject *__pyx_tuple__5;
+static PyObject *__pyx_codeobj__6;
 
-/* "crossword.pyx":3
- * from libc.stdio cimport *
- * from math import *
- * cdef int main():             # <<<<<<<<<<<<<<
+/* "crossword.pyx":14
+ * ctypedef space spaces
  * 
- *     return 0
- */
-
-static int __pyx_f_9crossword_main(void) {
-  int __pyx_r;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("main", 0);
-
-  /* "crossword.pyx":5
- * cdef int main():
- * 
- *     return 0             # <<<<<<<<<<<<<<
- * def makeBoard():
- *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
- */
-  __pyx_r = 0;
-  goto __pyx_L0;
-
-  /* "crossword.pyx":3
- * from libc.stdio cimport *
- * from math import *
- * cdef int main():             # <<<<<<<<<<<<<<
- * 
- *     return 0
- */
-
-  /* function exit code */
-  __pyx_L0:;
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "crossword.pyx":6
- * 
- *     return 0
  * def makeBoard():             # <<<<<<<<<<<<<<
  *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  *     fillIns = ['_', '#']
@@ -720,22 +761,34 @@ static PyObject *__pyx_pw_9crossword_1makeBoard(PyObject *__pyx_self, CYTHON_UNU
 static PyObject *__pyx_pf_9crossword_makeBoard(CYTHON_UNUSED PyObject *__pyx_self) {
   CYTHON_UNUSED PyObject *__pyx_v_char = NULL;
   CYTHON_UNUSED PyObject *__pyx_v_fillIns = NULL;
+  __pyx_t_9crossword_spaces *__pyx_v_board;
+  __pyx_t_9crossword_spaces __pyx_v_temp;
+  long __pyx_v_i;
+  long __pyx_v_x;
+  long __pyx_v_y;
+  PyObject *__pyx_v_val = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
+  long __pyx_t_2;
+  long __pyx_t_3;
+  long __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_6;
+  int __pyx_t_7;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("makeBoard", 0);
 
-  /* "crossword.pyx":7
- *     return 0
+  /* "crossword.pyx":15
+ * 
  * def makeBoard():
  *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']             # <<<<<<<<<<<<<<
  *     fillIns = ['_', '#']
- *     # We want to weight the fillIns more, so that they occur more often than the chars.
+ *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))
  */
-  __pyx_t_1 = PyList_New(26); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 7; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(26); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_a);
   __Pyx_GIVEREF(__pyx_n_s_a);
@@ -818,14 +871,14 @@ static PyObject *__pyx_pf_9crossword_makeBoard(CYTHON_UNUSED PyObject *__pyx_sel
   __pyx_v_char = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "crossword.pyx":8
+  /* "crossword.pyx":16
  * def makeBoard():
  *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  *     fillIns = ['_', '#']             # <<<<<<<<<<<<<<
- *     # We want to weight the fillIns more, so that they occur more often than the chars.
- *     # cdef struct for the board
+ *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))
+ *     cdef spaces temp
  */
-  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 8; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_);
   __Pyx_GIVEREF(__pyx_n_s_);
@@ -836,9 +889,164 @@ static PyObject *__pyx_pf_9crossword_makeBoard(CYTHON_UNUSED PyObject *__pyx_sel
   __pyx_v_fillIns = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "crossword.pyx":6
+  /* "crossword.pyx":17
+ *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+ *     fillIns = ['_', '#']
+ *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))             # <<<<<<<<<<<<<<
+ *     cdef spaces temp
+ *     for i in range(100):
+ */
+  __pyx_v_board = ((__pyx_t_9crossword_spaces *)malloc((0x64 * (sizeof(__pyx_t_9crossword_spaces)))));
+
+  /* "crossword.pyx":19
+ *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))
+ *     cdef spaces temp
+ *     for i in range(100):             # <<<<<<<<<<<<<<
+ *         for x in range(10):
+ *             for y in range(10):
+ */
+  for (__pyx_t_2 = 0; __pyx_t_2 < 0x64; __pyx_t_2+=1) {
+    __pyx_v_i = __pyx_t_2;
+
+    /* "crossword.pyx":20
+ *     cdef spaces temp
+ *     for i in range(100):
+ *         for x in range(10):             # <<<<<<<<<<<<<<
+ *             for y in range(10):
+ *                 temp.row = y
+ */
+    for (__pyx_t_3 = 0; __pyx_t_3 < 10; __pyx_t_3+=1) {
+      __pyx_v_x = __pyx_t_3;
+
+      /* "crossword.pyx":21
+ *     for i in range(100):
+ *         for x in range(10):
+ *             for y in range(10):             # <<<<<<<<<<<<<<
+ *                 temp.row = y
+ *                 temp.column = x
+ */
+      for (__pyx_t_4 = 0; __pyx_t_4 < 10; __pyx_t_4+=1) {
+        __pyx_v_y = __pyx_t_4;
+
+        /* "crossword.pyx":22
+ *         for x in range(10):
+ *             for y in range(10):
+ *                 temp.row = y             # <<<<<<<<<<<<<<
+ *                 temp.column = x
+ *                 val = randint(1,10)
+ */
+        __pyx_v_temp.row = __pyx_v_y;
+
+        /* "crossword.pyx":23
+ *             for y in range(10):
+ *                 temp.row = y
+ *                 temp.column = x             # <<<<<<<<<<<<<<
+ *                 val = randint(1,10)
+ *                 temp.charType = val
+ */
+        __pyx_v_temp.column = __pyx_v_x;
+
+        /* "crossword.pyx":24
+ *                 temp.row = y
+ *                 temp.column = x
+ *                 val = randint(1,10)             # <<<<<<<<<<<<<<
+ *                 temp.charType = val
+ *                 board[i] = temp
+ */
+        __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_5);
+        __pyx_t_5 = 0;
+
+        /* "crossword.pyx":25
+ *                 temp.column = x
+ *                 val = randint(1,10)
+ *                 temp.charType = val             # <<<<<<<<<<<<<<
+ *                 board[i] = temp
+ *         if(board[i].charType < 8):
+ */
+        __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_v_val); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_v_temp.charType = __pyx_t_6;
+
+        /* "crossword.pyx":26
+ *                 val = randint(1,10)
+ *                 temp.charType = val
+ *                 board[i] = temp             # <<<<<<<<<<<<<<
+ *         if(board[i].charType < 8):
+ *             board[i].charType = 0
+ */
+        (__pyx_v_board[__pyx_v_i]) = __pyx_v_temp;
+      }
+    }
+
+    /* "crossword.pyx":27
+ *                 temp.charType = val
+ *                 board[i] = temp
+ *         if(board[i].charType < 8):             # <<<<<<<<<<<<<<
+ *             board[i].charType = 0
+ *         else:
+ */
+    __pyx_t_7 = (((__pyx_v_board[__pyx_v_i]).charType < 8) != 0);
+    if (__pyx_t_7) {
+
+      /* "crossword.pyx":28
+ *                 board[i] = temp
+ *         if(board[i].charType < 8):
+ *             board[i].charType = 0             # <<<<<<<<<<<<<<
+ *         else:
+ *             board[i].charType = 1
+ */
+      (__pyx_v_board[__pyx_v_i]).charType = 0;
+
+      /* "crossword.pyx":27
+ *                 temp.charType = val
+ *                 board[i] = temp
+ *         if(board[i].charType < 8):             # <<<<<<<<<<<<<<
+ *             board[i].charType = 0
+ *         else:
+ */
+      goto __pyx_L9;
+    }
+
+    /* "crossword.pyx":30
+ *             board[i].charType = 0
+ *         else:
+ *             board[i].charType = 1             # <<<<<<<<<<<<<<
  * 
- *     return 0
+ *     for i in range(100):
+ */
+    /*else*/ {
+      (__pyx_v_board[__pyx_v_i]).charType = 1;
+    }
+    __pyx_L9:;
+  }
+
+  /* "crossword.pyx":32
+ *             board[i].charType = 1
+ * 
+ *     for i in range(100):             # <<<<<<<<<<<<<<
+ *         printf("The value of space %d is: %d\n", i, board[i].charType)
+ *     # We want to weight the fillIns more, so that they occur more often than the chars.
+ */
+  for (__pyx_t_2 = 0; __pyx_t_2 < 0x64; __pyx_t_2+=1) {
+    __pyx_v_i = __pyx_t_2;
+
+    /* "crossword.pyx":33
+ * 
+ *     for i in range(100):
+ *         printf("The value of space %d is: %d\n", i, board[i].charType)             # <<<<<<<<<<<<<<
+ *     # We want to weight the fillIns more, so that they occur more often than the chars.
+ *     # cdef struct for the board
+ */
+    printf(__pyx_k_The_value_of_space_d_is_d, __pyx_v_i, (__pyx_v_board[__pyx_v_i]).charType);
+  }
+
+  /* "crossword.pyx":14
+ * ctypedef space spaces
+ * 
  * def makeBoard():             # <<<<<<<<<<<<<<
  *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  *     fillIns = ['_', '#']
@@ -849,12 +1057,91 @@ static PyObject *__pyx_pf_9crossword_makeBoard(CYTHON_UNUSED PyObject *__pyx_sel
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("crossword.makeBoard", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_char);
   __Pyx_XDECREF(__pyx_v_fillIns);
+  __Pyx_XDECREF(__pyx_v_val);
   __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "crossword.pyx":38
+ *     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
+ *     # Randomly assign thw fillIns and then the chars
+ * cdef int main():             # <<<<<<<<<<<<<<
+ *     makeBoard()
+ *     return 0
+ */
+
+static int __pyx_f_9crossword_main(void) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("main", 0);
+
+  /* "crossword.pyx":39
+ *     # Randomly assign thw fillIns and then the chars
+ * cdef int main():
+ *     makeBoard()             # <<<<<<<<<<<<<<
+ *     return 0
+ * main()
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_makeBoard); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (__pyx_t_3) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  } else {
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "crossword.pyx":40
+ * cdef int main():
+ *     makeBoard()
+ *     return 0             # <<<<<<<<<<<<<<
+ * main()
+ */
+  __pyx_r = 0;
+  goto __pyx_L0;
+
+  /* "crossword.pyx":38
+ *     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
+ *     # Randomly assign thw fillIns and then the chars
+ * cdef int main():             # <<<<<<<<<<<<<<
+ *     makeBoard()
+ *     return 0
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_WriteUnraisable("crossword.main", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __pyx_r = 0;
+  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -866,10 +1153,16 @@ static PyMethodDef __pyx_methods[] = {
 static int __pyx_import_star_set(PyObject *o, PyObject* py_name, char *name) {
   static const char* internal_type_names[] = {
     "FILE",
+    "__pyx_ctuple_long",
+    "__pyx_ctuple_long__and_long",
+    "__pyx_ctuple_long__and_long_struct",
+    "__pyx_ctuple_long_struct",
     "const_char",
     "const_fpos_t",
     "const_void",
     "fpos_t",
+    "space",
+    "spaces",
     0
   };
   const char** type_name = internal_type_names;
@@ -1144,9 +1437,10 @@ static struct PyModuleDef __pyx_moduledef = {
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 1},
   {&__pyx_kp_s__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 1, 0},
-  {&__pyx_n_s__3, __pyx_k__3, sizeof(__pyx_k__3), 0, 0, 1, 1},
+  {&__pyx_n_s__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 0, 1, 1},
   {&__pyx_n_s_a, __pyx_k_a, sizeof(__pyx_k_a), 0, 0, 1, 1},
   {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
+  {&__pyx_n_s_board, __pyx_k_board, sizeof(__pyx_k_board), 0, 0, 1, 1},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
   {&__pyx_n_s_char, __pyx_k_char, sizeof(__pyx_k_char), 0, 0, 1, 1},
   {&__pyx_n_s_crossword, __pyx_k_crossword, sizeof(__pyx_k_crossword), 0, 0, 1, 1},
@@ -1171,11 +1465,16 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 0, 1, 1},
   {&__pyx_n_s_q, __pyx_k_q, sizeof(__pyx_k_q), 0, 0, 1, 1},
   {&__pyx_n_s_r, __pyx_k_r, sizeof(__pyx_k_r), 0, 0, 1, 1},
+  {&__pyx_n_s_randint, __pyx_k_randint, sizeof(__pyx_k_randint), 0, 0, 1, 1},
+  {&__pyx_n_s_random, __pyx_k_random, sizeof(__pyx_k_random), 0, 0, 1, 1},
+  {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_s, __pyx_k_s, sizeof(__pyx_k_s), 0, 0, 1, 1},
   {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
+  {&__pyx_n_s_temp, __pyx_k_temp, sizeof(__pyx_k_temp), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_u, __pyx_k_u, sizeof(__pyx_k_u), 0, 0, 1, 1},
   {&__pyx_n_s_v, __pyx_k_v, sizeof(__pyx_k_v), 0, 0, 1, 1},
+  {&__pyx_n_s_val, __pyx_k_val, sizeof(__pyx_k_val), 0, 0, 1, 1},
   {&__pyx_n_s_w, __pyx_k_w, sizeof(__pyx_k_w), 0, 0, 1, 1},
   {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
   {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
@@ -1183,24 +1482,38 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
+  __pyx_L1_error:;
+  return -1;
 }
 
 static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "crossword.pyx":6
+  /* "crossword.pyx":24
+ *                 temp.row = y
+ *                 temp.column = x
+ *                 val = randint(1,10)             # <<<<<<<<<<<<<<
+ *                 temp.charType = val
+ *                 board[i] = temp
+ */
+  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
+
+  /* "crossword.pyx":14
+ * ctypedef space spaces
  * 
- *     return 0
  * def makeBoard():             # <<<<<<<<<<<<<<
  *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  *     fillIns = ['_', '#']
  */
-  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_n_s_char, __pyx_n_s_fillIns); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
-  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ubuntu_workspace_crossword, __pyx_n_s_makeBoard, 6, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__5 = PyTuple_Pack(8, __pyx_n_s_char, __pyx_n_s_fillIns, __pyx_n_s_board, __pyx_n_s_temp, __pyx_n_s_i, __pyx_n_s_x, __pyx_n_s_y, __pyx_n_s_val); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(0, 0, 8, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_ubuntu_workspace_crossword, __pyx_n_s_makeBoard, 14, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -1210,6 +1523,8 @@ static int __Pyx_InitCachedConstants(void) {
 
 static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_int_10 = PyInt_FromLong(10); if (unlikely(!__pyx_int_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -1313,41 +1628,69 @@ PyMODINIT_FUNC PyInit_crossword(void)
   /* "crossword.pyx":2
  * from libc.stdio cimport *
  * from math import *             # <<<<<<<<<<<<<<
- * cdef int main():
- * 
+ * from random import randint
+ * from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s__3);
-  __Pyx_GIVEREF(__pyx_n_s__3);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s__3);
+  __Pyx_INCREF(__pyx_n_s__4);
+  __Pyx_GIVEREF(__pyx_n_s__4);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s__4);
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_math, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_import_star(__pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "crossword.pyx":6
+  /* "crossword.pyx":3
+ * from libc.stdio cimport *
+ * from math import *
+ * from random import randint             # <<<<<<<<<<<<<<
+ * from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
+ * from libc.stdlib cimport malloc, free
+ */
+  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_n_s_randint);
+  __Pyx_GIVEREF(__pyx_n_s_randint);
+  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_randint);
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_random, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_randint); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_randint, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 3; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "crossword.pyx":14
+ * ctypedef space spaces
  * 
- *     return 0
  * def makeBoard():             # <<<<<<<<<<<<<<
  *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  *     fillIns = ['_', '#']
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_9crossword_1makeBoard, NULL, __pyx_n_s_crossword); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_makeBoard, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9crossword_1makeBoard, NULL, __pyx_n_s_crossword); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_makeBoard, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "crossword.pyx":41
+ *     makeBoard()
+ *     return 0
+ * main()             # <<<<<<<<<<<<<<
+ */
+  __pyx_f_9crossword_main();
 
   /* "crossword.pyx":1
  * from libc.stdio cimport *             # <<<<<<<<<<<<<<
  * from math import *
- * cdef int main():
+ * from random import randint
  */
-  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /*--- Wrapped vars code ---*/
 
@@ -1388,6 +1731,190 @@ end:
     return (__Pyx_RefNannyAPIStruct *)r;
 }
 #endif
+
+static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
+    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
+    if (unlikely(!result)) {
+        PyErr_Format(PyExc_NameError,
+#if PY_MAJOR_VERSION >= 3
+            "name '%U' is not defined", name);
+#else
+            "name '%.200s' is not defined", PyString_AS_STRING(name));
+#endif
+    }
+    return result;
+}
+
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
+    PyObject *result;
+#if CYTHON_COMPILING_IN_CPYTHON
+    result = PyDict_GetItem(__pyx_d, name);
+    if (likely(result)) {
+        Py_INCREF(result);
+    } else {
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    if (!result) {
+        PyErr_Clear();
+#endif
+        result = __Pyx_GetBuiltinName(name);
+    }
+    return result;
+}
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
+    PyObject *result;
+    ternaryfunc call = func->ob_type->tp_call;
+    if (unlikely(!call))
+        return PyObject_Call(func, arg, kw);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = (*call)(func, arg, kw);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
+}
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
+    PyObject *self, *result;
+    PyCFunction cfunc;
+    cfunc = PyCFunction_GET_FUNCTION(func);
+    self = PyCFunction_GET_SELF(func);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = cfunc(self, arg);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
+}
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static PyObject* __Pyx__PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_New(1);
+    if (unlikely(!args)) return NULL;
+    Py_INCREF(arg);
+    PyTuple_SET_ITEM(args, 0, arg);
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+#ifdef __Pyx_CyFunction_USED
+    if (likely(PyCFunction_Check(func) || PyObject_TypeCheck(func, __pyx_CyFunctionType))) {
+#else
+    if (likely(PyCFunction_Check(func))) {
+#endif
+        if (likely(PyCFunction_GET_FLAGS(func) & METH_O)) {
+            return __Pyx_PyObject_CallMethO(func, arg);
+        }
+    }
+    return __Pyx__PyObject_CallOneArg(func, arg);
+}
+#else
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_Pack(1, arg);
+    if (unlikely(!args)) return NULL;
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
+#ifdef __Pyx_CyFunction_USED
+    if (likely(PyCFunction_Check(func) || PyObject_TypeCheck(func, __pyx_CyFunctionType))) {
+#else
+    if (likely(PyCFunction_Check(func))) {
+#endif
+        if (likely(PyCFunction_GET_FLAGS(func) & METH_NOARGS)) {
+            return __Pyx_PyObject_CallMethO(func, NULL);
+        }
+    }
+    return __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL);
+}
+#endif
+
+static CYTHON_INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyThreadState *tstate = PyThreadState_GET();
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = type;
+    tstate->curexc_value = value;
+    tstate->curexc_traceback = tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_Restore(type, value, tb);
+#endif
+}
+static CYTHON_INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyObject **tb) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyThreadState *tstate = PyThreadState_GET();
+    *type = tstate->curexc_type;
+    *value = tstate->curexc_value;
+    *tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+#else
+    PyErr_Fetch(type, value, tb);
+#endif
+}
+
+static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
+                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
+                                  int full_traceback, CYTHON_UNUSED int nogil) {
+    PyObject *old_exc, *old_val, *old_tb;
+    PyObject *ctx;
+#ifdef WITH_THREAD
+    PyGILState_STATE state;
+    if (nogil)
+        state = PyGILState_Ensure();
+#endif
+    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
+    if (full_traceback) {
+        Py_XINCREF(old_exc);
+        Py_XINCREF(old_val);
+        Py_XINCREF(old_tb);
+        __Pyx_ErrRestore(old_exc, old_val, old_tb);
+        PyErr_PrintEx(1);
+    }
+    #if PY_MAJOR_VERSION < 3
+    ctx = PyString_FromString(name);
+    #else
+    ctx = PyUnicode_FromString(name);
+    #endif
+    __Pyx_ErrRestore(old_exc, old_val, old_tb);
+    if (!ctx) {
+        PyErr_WriteUnraisable(Py_None);
+    } else {
+        PyErr_WriteUnraisable(ctx);
+        Py_DECREF(ctx);
+    }
+#ifdef WITH_THREAD
+    if (nogil)
+        PyGILState_Release(state);
+#endif
+}
 
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
     PyObject *empty_list = 0;
@@ -1460,6 +1987,19 @@ bad:
     Py_XDECREF(empty_list);
     Py_XDECREF(empty_dict);
     return module;
+}
+
+static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
+    PyObject* value = __Pyx_PyObject_GetAttrStr(module, name);
+    if (unlikely(!value) && PyErr_ExceptionMatches(PyExc_AttributeError)) {
+        PyErr_Format(PyExc_ImportError,
+        #if PY_MAJOR_VERSION < 3
+            "cannot import name %.230s", PyString_AS_STRING(name));
+        #else
+            "cannot import name %S", name);
+        #endif
+    }
+    return value;
 }
 
 static int __pyx_bisect_code_objects(__Pyx_CodeObjectCacheEntry* entries, int count, int code_line) {
@@ -1619,32 +2159,6 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
 bad:
     Py_XDECREF(py_code);
     Py_XDECREF(py_frame);
-}
-
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-        }
-    } else {
-        if (sizeof(long) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
-                                     little, !is_unsigned);
-    }
 }
 
 #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
@@ -2038,6 +2552,32 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to int");
     return (int) -1;
+}
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
 }
 
 static CYTHON_INLINE int __Pyx_StrEq(const char *s1, const char *s2) {
