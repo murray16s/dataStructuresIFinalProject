@@ -465,8 +465,8 @@ struct __pyx_t_9crossword_space;
  * from libc.stdlib cimport malloc, free
  * 
  * cdef struct space:             # <<<<<<<<<<<<<<
- *     int row
- *     int column
+ * 	int row
+ * 	int column
  */
 struct __pyx_t_9crossword_space {
   int row;
@@ -476,11 +476,11 @@ struct __pyx_t_9crossword_space {
 };
 
 /* "crossword.pyx":11
- *     char* value
- *     int charType
+ * 	char* value
+ * 	int charType
  * ctypedef space spaces             # <<<<<<<<<<<<<<
  * 
- * cdef spaces* makeBoard():
+ * cdef void makeBoard(spaces board[][10]):
  */
 typedef struct __pyx_t_9crossword_space __pyx_t_9crossword_spaces;
 
@@ -634,8 +634,6 @@ static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
 
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
 
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
-
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 static int __Pyx_Print(PyObject*, PyObject *, int);
@@ -660,8 +658,8 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 /* Module declarations from 'libc.stdlib' */
 
 /* Module declarations from 'crossword' */
-static __pyx_t_9crossword_spaces *__pyx_f_9crossword_makeBoard(void); /*proto*/
-static void __pyx_f_9crossword_printBoard(__pyx_t_9crossword_spaces *); /*proto*/
+static void __pyx_f_9crossword_makeBoard(__pyx_t_9crossword_spaces (*)[10]); /*proto*/
+static void __pyx_f_9crossword_printBoard(__pyx_t_9crossword_spaces (*)[10]); /*proto*/
 static int __pyx_f_9crossword_main(void); /*proto*/
 #define __Pyx_MODULE_NAME "crossword"
 int __pyx_module_is_main_crossword = 0;
@@ -764,28 +762,27 @@ static PyObject *__pyx_tuple__5;
 /* "crossword.pyx":13
  * ctypedef space spaces
  * 
- * cdef spaces* makeBoard():             # <<<<<<<<<<<<<<
- *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
- *     fillIns = ['_', '#']
+ * cdef void makeBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
+ * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+ * 	fillIns = ['_', '#']
  */
 
-static __pyx_t_9crossword_spaces *__pyx_f_9crossword_makeBoard(void) {
+static void __pyx_f_9crossword_makeBoard(__pyx_t_9crossword_spaces (*__pyx_v_board)[10]) {
   PyObject *__pyx_v_char = NULL;
   CYTHON_UNUSED PyObject *__pyx_v_fillIns = NULL;
-  __pyx_t_9crossword_spaces *__pyx_v_board;
   __pyx_t_9crossword_spaces __pyx_v_temp;
-  int __pyx_v_i;
   long __pyx_v_x;
   long __pyx_v_y;
   PyObject *__pyx_v_val = NULL;
+  long __pyx_v_i;
+  long __pyx_v_j;
   PyObject *__pyx_v_index = NULL;
-  __pyx_t_9crossword_spaces *__pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  int __pyx_t_2;
+  long __pyx_t_2;
   long __pyx_t_3;
-  long __pyx_t_4;
-  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_5;
   int __pyx_t_6;
   char *__pyx_t_7;
   int __pyx_lineno = 0;
@@ -795,10 +792,10 @@ static __pyx_t_9crossword_spaces *__pyx_f_9crossword_makeBoard(void) {
 
   /* "crossword.pyx":14
  * 
- * cdef spaces* makeBoard():
- *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']             # <<<<<<<<<<<<<<
- *     fillIns = ['_', '#']
- *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))
+ * cdef void makeBoard(spaces board[][10]):
+ * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']             # <<<<<<<<<<<<<<
+ * 	fillIns = ['_', '#']
+ * 	cdef spaces temp
  */
   __pyx_t_1 = PyList_New(26); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -884,11 +881,11 @@ static __pyx_t_9crossword_spaces *__pyx_f_9crossword_makeBoard(void) {
   __pyx_t_1 = 0;
 
   /* "crossword.pyx":15
- * cdef spaces* makeBoard():
- *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
- *     fillIns = ['_', '#']             # <<<<<<<<<<<<<<
- *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))
- *     cdef spaces temp
+ * cdef void makeBoard(spaces board[][10]):
+ * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+ * 	fillIns = ['_', '#']             # <<<<<<<<<<<<<<
+ * 	cdef spaces temp
+ * 	for x in range(10):
  */
   __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -901,302 +898,265 @@ static __pyx_t_9crossword_spaces *__pyx_f_9crossword_makeBoard(void) {
   __pyx_v_fillIns = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "crossword.pyx":16
- *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
- *     fillIns = ['_', '#']
- *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))             # <<<<<<<<<<<<<<
- *     cdef spaces temp
- *     cdef int i = 0
+  /* "crossword.pyx":17
+ * 	fillIns = ['_', '#']
+ * 	cdef spaces temp
+ * 	for x in range(10):             # <<<<<<<<<<<<<<
+ * 		for y in range(10):
+ * 			temp.row = y
  */
-  __pyx_v_board = ((__pyx_t_9crossword_spaces *)malloc((0x64 * (sizeof(__pyx_t_9crossword_spaces)))));
+  for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
+    __pyx_v_x = __pyx_t_2;
 
-  /* "crossword.pyx":18
- *     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))
- *     cdef spaces temp
- *     cdef int i = 0             # <<<<<<<<<<<<<<
- *     while(i < 100):
- *         for x in range(10):
- */
-  __pyx_v_i = 0;
-
-  /* "crossword.pyx":19
- *     cdef spaces temp
- *     cdef int i = 0
- *     while(i < 100):             # <<<<<<<<<<<<<<
- *         for x in range(10):
- *             for y in range(10):
- */
-  while (1) {
-    __pyx_t_2 = ((__pyx_v_i < 0x64) != 0);
-    if (!__pyx_t_2) break;
-
-    /* "crossword.pyx":20
- *     cdef int i = 0
- *     while(i < 100):
- *         for x in range(10):             # <<<<<<<<<<<<<<
- *             for y in range(10):
- *                 temp.row = y
+    /* "crossword.pyx":18
+ * 	cdef spaces temp
+ * 	for x in range(10):
+ * 		for y in range(10):             # <<<<<<<<<<<<<<
+ * 			temp.row = y
+ * 			temp.column = x
  */
     for (__pyx_t_3 = 0; __pyx_t_3 < 10; __pyx_t_3+=1) {
-      __pyx_v_x = __pyx_t_3;
+      __pyx_v_y = __pyx_t_3;
+
+      /* "crossword.pyx":19
+ * 	for x in range(10):
+ * 		for y in range(10):
+ * 			temp.row = y             # <<<<<<<<<<<<<<
+ * 			temp.column = x
+ * 			val = randint(1,10)
+ */
+      __pyx_v_temp.row = __pyx_v_y;
+
+      /* "crossword.pyx":20
+ * 		for y in range(10):
+ * 			temp.row = y
+ * 			temp.column = x             # <<<<<<<<<<<<<<
+ * 			val = randint(1,10)
+ * 			temp.charType = val
+ */
+      __pyx_v_temp.column = __pyx_v_x;
 
       /* "crossword.pyx":21
- *     while(i < 100):
- *         for x in range(10):
- *             for y in range(10):             # <<<<<<<<<<<<<<
- *                 temp.row = y
- *                 temp.column = x
+ * 			temp.row = y
+ * 			temp.column = x
+ * 			val = randint(1,10)             # <<<<<<<<<<<<<<
+ * 			temp.charType = val
+ * 			board[x][y] = temp
  */
-      for (__pyx_t_4 = 0; __pyx_t_4 < 10; __pyx_t_4+=1) {
-        __pyx_v_y = __pyx_t_4;
+      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_4);
+      __pyx_t_4 = 0;
 
-        /* "crossword.pyx":22
- *         for x in range(10):
- *             for y in range(10):
- *                 temp.row = y             # <<<<<<<<<<<<<<
- *                 temp.column = x
- *                 val = randint(1,10)
+      /* "crossword.pyx":22
+ * 			temp.column = x
+ * 			val = randint(1,10)
+ * 			temp.charType = val             # <<<<<<<<<<<<<<
+ * 			board[x][y] = temp
+ * 	for i in range(10):
  */
-        __pyx_v_temp.row = __pyx_v_y;
+      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_val); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_v_temp.charType = __pyx_t_5;
 
-        /* "crossword.pyx":23
- *             for y in range(10):
- *                 temp.row = y
- *                 temp.column = x             # <<<<<<<<<<<<<<
- *                 val = randint(1,10)
- *                 temp.charType = val
+      /* "crossword.pyx":23
+ * 			val = randint(1,10)
+ * 			temp.charType = val
+ * 			board[x][y] = temp             # <<<<<<<<<<<<<<
+ * 	for i in range(10):
+ * 		for j in range(10):
  */
-        __pyx_v_temp.column = __pyx_v_x;
+      ((__pyx_v_board[__pyx_v_x])[__pyx_v_y]) = __pyx_v_temp;
+    }
+  }
 
-        /* "crossword.pyx":24
- *                 temp.row = y
- *                 temp.column = x
- *                 val = randint(1,10)             # <<<<<<<<<<<<<<
- *                 temp.charType = val
- *                 board[i] = temp
+  /* "crossword.pyx":24
+ * 			temp.charType = val
+ * 			board[x][y] = temp
+ * 	for i in range(10):             # <<<<<<<<<<<<<<
+ * 		for j in range(10):
+ * 			if(board[i][j].charType < 9):
  */
-        __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_5);
-        __pyx_t_5 = 0;
+  for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
+    __pyx_v_i = __pyx_t_2;
 
-        /* "crossword.pyx":25
- *                 temp.column = x
- *                 val = randint(1,10)
- *                 temp.charType = val             # <<<<<<<<<<<<<<
- *                 board[i] = temp
- *                 i += 1
+    /* "crossword.pyx":25
+ * 			board[x][y] = temp
+ * 	for i in range(10):
+ * 		for j in range(10):             # <<<<<<<<<<<<<<
+ * 			if(board[i][j].charType < 9):
+ * 				val = randint(1,10)
  */
-        __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_v_val); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_v_temp.charType = __pyx_t_6;
+    for (__pyx_t_3 = 0; __pyx_t_3 < 10; __pyx_t_3+=1) {
+      __pyx_v_j = __pyx_t_3;
 
-        /* "crossword.pyx":26
- *                 val = randint(1,10)
- *                 temp.charType = val
- *                 board[i] = temp             # <<<<<<<<<<<<<<
- *                 i += 1
- *     for i in range(100):
+      /* "crossword.pyx":26
+ * 	for i in range(10):
+ * 		for j in range(10):
+ * 			if(board[i][j].charType < 9):             # <<<<<<<<<<<<<<
+ * 				val = randint(1,10)
+ * 				if(val < 8):
  */
-        (__pyx_v_board[__pyx_v_i]) = __pyx_v_temp;
+      __pyx_t_6 = ((((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).charType < 9) != 0);
+      if (__pyx_t_6) {
 
         /* "crossword.pyx":27
- *                 temp.charType = val
- *                 board[i] = temp
- *                 i += 1             # <<<<<<<<<<<<<<
- *     for i in range(100):
- *         if(board[i].charType < 9):
+ * 		for j in range(10):
+ * 			if(board[i][j].charType < 9):
+ * 				val = randint(1,10)             # <<<<<<<<<<<<<<
+ * 				if(val < 8):
+ * 					board[i][j].value = '_'
  */
-        __pyx_v_i = (__pyx_v_i + 1);
-      }
-    }
-  }
+        __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_1);
+        __pyx_t_1 = 0;
 
-  /* "crossword.pyx":28
- *                 board[i] = temp
- *                 i += 1
- *     for i in range(100):             # <<<<<<<<<<<<<<
- *         if(board[i].charType < 9):
- *             val = randint(1,10)
+        /* "crossword.pyx":28
+ * 			if(board[i][j].charType < 9):
+ * 				val = randint(1,10)
+ * 				if(val < 8):             # <<<<<<<<<<<<<<
+ * 					board[i][j].value = '_'
+ * 				else:
  */
-  for (__pyx_t_6 = 0; __pyx_t_6 < 0x64; __pyx_t_6+=1) {
-    __pyx_v_i = __pyx_t_6;
+        __pyx_t_1 = PyObject_RichCompare(__pyx_v_val, __pyx_int_8, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        if (__pyx_t_6) {
 
-    /* "crossword.pyx":29
- *                 i += 1
- *     for i in range(100):
- *         if(board[i].charType < 9):             # <<<<<<<<<<<<<<
- *             val = randint(1,10)
- *             if(val < 8):
+          /* "crossword.pyx":29
+ * 				val = randint(1,10)
+ * 				if(val < 8):
+ * 					board[i][j].value = '_'             # <<<<<<<<<<<<<<
+ * 				else:
+ * 					board[i][j].value = '#'
  */
-    __pyx_t_2 = (((__pyx_v_board[__pyx_v_i]).charType < 9) != 0);
-    if (__pyx_t_2) {
+          ((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value = __pyx_k_;
 
-      /* "crossword.pyx":30
- *     for i in range(100):
- *         if(board[i].charType < 9):
- *             val = randint(1,10)             # <<<<<<<<<<<<<<
- *             if(val < 8):
- *                 board[i].value = '_'
+          /* "crossword.pyx":28
+ * 			if(board[i][j].charType < 9):
+ * 				val = randint(1,10)
+ * 				if(val < 8):             # <<<<<<<<<<<<<<
+ * 					board[i][j].value = '_'
+ * 				else:
  */
-      __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_1);
-      __pyx_t_1 = 0;
-
-      /* "crossword.pyx":31
- *         if(board[i].charType < 9):
- *             val = randint(1,10)
- *             if(val < 8):             # <<<<<<<<<<<<<<
- *                 board[i].value = '_'
- *             else:
- */
-      __pyx_t_1 = PyObject_RichCompare(__pyx_v_val, __pyx_int_8, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (__pyx_t_2) {
-
-        /* "crossword.pyx":32
- *             val = randint(1,10)
- *             if(val < 8):
- *                 board[i].value = '_'             # <<<<<<<<<<<<<<
- *             else:
- *                 board[i].value = '#'
- */
-        (__pyx_v_board[__pyx_v_i]).value = __pyx_k_;
+          goto __pyx_L12;
+        }
 
         /* "crossword.pyx":31
- *         if(board[i].charType < 9):
- *             val = randint(1,10)
- *             if(val < 8):             # <<<<<<<<<<<<<<
- *                 board[i].value = '_'
- *             else:
+ * 					board[i][j].value = '_'
+ * 				else:
+ * 					board[i][j].value = '#'             # <<<<<<<<<<<<<<
+ * 			else:
+ * 				index = randint(0,25)
  */
-        goto __pyx_L12;
+        /*else*/ {
+          ((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value = __pyx_k__2;
+        }
+        __pyx_L12:;
+
+        /* "crossword.pyx":26
+ * 	for i in range(10):
+ * 		for j in range(10):
+ * 			if(board[i][j].charType < 9):             # <<<<<<<<<<<<<<
+ * 				val = randint(1,10)
+ * 				if(val < 8):
+ */
+        goto __pyx_L11;
       }
 
-      /* "crossword.pyx":34
- *                 board[i].value = '_'
- *             else:
- *                 board[i].value = '#'             # <<<<<<<<<<<<<<
- *         else:
- *             index = randint(0,25)
+      /* "crossword.pyx":33
+ * 					board[i][j].value = '#'
+ * 			else:
+ * 				index = randint(0,25)             # <<<<<<<<<<<<<<
+ * 				board[i][j].value = char[index]
+ * 
  */
       /*else*/ {
-        (__pyx_v_board[__pyx_v_i]).value = __pyx_k__2;
+        __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_index, __pyx_t_4);
+        __pyx_t_4 = 0;
+
+        /* "crossword.pyx":34
+ * 			else:
+ * 				index = randint(0,25)
+ * 				board[i][j].value = char[index]             # <<<<<<<<<<<<<<
+ * 
+ *     # We want to weight the fillIns more, so that they occur more often than the chars.
+ */
+        __pyx_t_4 = PyObject_GetItem(__pyx_v_char, __pyx_v_index); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_t_4); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        ((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value = __pyx_t_7;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       }
-      __pyx_L12:;
-
-      /* "crossword.pyx":29
- *                 i += 1
- *     for i in range(100):
- *         if(board[i].charType < 9):             # <<<<<<<<<<<<<<
- *             val = randint(1,10)
- *             if(val < 8):
- */
-      goto __pyx_L11;
+      __pyx_L11:;
     }
-
-    /* "crossword.pyx":36
- *                 board[i].value = '#'
- *         else:
- *             index = randint(0,25)             # <<<<<<<<<<<<<<
- *             board[i].value = char[index]
- *     # We want to weight the fillIns more, so that they occur more often than the chars.
- */
-    /*else*/ {
-      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_index, __pyx_t_5);
-      __pyx_t_5 = 0;
-
-      /* "crossword.pyx":37
- *         else:
- *             index = randint(0,25)
- *             board[i].value = char[index]             # <<<<<<<<<<<<<<
- *     # We want to weight the fillIns more, so that they occur more often than the chars.
- *     # cdef struct for the board
- */
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_char, __pyx_v_index); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_t_5); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      (__pyx_v_board[__pyx_v_i]).value = __pyx_t_7;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    }
-    __pyx_L11:;
   }
-
-  /* "crossword.pyx":42
- *     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
- *     # Randomly assign thw fillIns and then the chars
- *     return board             # <<<<<<<<<<<<<<
- * cdef void printBoard(spaces* board):
- *     rows = ["","","","","","","","","",""]
- */
-  __pyx_r = __pyx_v_board;
-  goto __pyx_L0;
 
   /* "crossword.pyx":13
  * ctypedef space spaces
  * 
- * cdef spaces* makeBoard():             # <<<<<<<<<<<<<<
- *     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
- *     fillIns = ['_', '#']
+ * cdef void makeBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
+ * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+ * 	fillIns = ['_', '#']
  */
 
   /* function exit code */
+  goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_WriteUnraisable("crossword.makeBoard", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_char);
   __Pyx_XDECREF(__pyx_v_fillIns);
   __Pyx_XDECREF(__pyx_v_val);
   __Pyx_XDECREF(__pyx_v_index);
   __Pyx_RefNannyFinishContext();
-  return __pyx_r;
 }
 
-/* "crossword.pyx":43
+/* "crossword.pyx":40
+ *     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
  *     # Randomly assign thw fillIns and then the chars
- *     return board
- * cdef void printBoard(spaces* board):             # <<<<<<<<<<<<<<
- *     rows = ["","","","","","","","","",""]
- *     for i in range(100):
+ * cdef void printBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
+ * 	rows = ["","","","","","","","","",""]
+ * 	for i in range(10):
  */
 
-static void __pyx_f_9crossword_printBoard(__pyx_t_9crossword_spaces *__pyx_v_board) {
+static void __pyx_f_9crossword_printBoard(__pyx_t_9crossword_spaces (*__pyx_v_board)[10]) {
   PyObject *__pyx_v_rows = NULL;
   long __pyx_v_i;
+  long __pyx_v_j;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   long __pyx_t_2;
-  int __pyx_t_3;
-  PyObject *__pyx_t_4 = NULL;
+  long __pyx_t_3;
+  long __pyx_t_4;
   PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("printBoard", 0);
 
-  /* "crossword.pyx":44
- *     return board
- * cdef void printBoard(spaces* board):
- *     rows = ["","","","","","","","","",""]             # <<<<<<<<<<<<<<
- *     for i in range(100):
- *         rows[board[i].row] += board[i].value + " "
+  /* "crossword.pyx":41
+ *     # Randomly assign thw fillIns and then the chars
+ * cdef void printBoard(spaces board[][10]):
+ * 	rows = ["","","","","","","","","",""]             # <<<<<<<<<<<<<<
+ * 	for i in range(10):
+ * 		for j in range(10):
  */
-  __pyx_t_1 = PyList_New(10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_kp_s__6);
   __Pyx_GIVEREF(__pyx_kp_s__6);
@@ -1231,132 +1191,143 @@ static void __pyx_f_9crossword_printBoard(__pyx_t_9crossword_spaces *__pyx_v_boa
   __pyx_v_rows = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "crossword.pyx":45
- * cdef void printBoard(spaces* board):
- *     rows = ["","","","","","","","","",""]
- *     for i in range(100):             # <<<<<<<<<<<<<<
- *         rows[board[i].row] += board[i].value + " "
- * 
+  /* "crossword.pyx":42
+ * cdef void printBoard(spaces board[][10]):
+ * 	rows = ["","","","","","","","","",""]
+ * 	for i in range(10):             # <<<<<<<<<<<<<<
+ * 		for j in range(10):
+ * 			rows[j] += board[i][j].value + " "
  */
-  for (__pyx_t_2 = 0; __pyx_t_2 < 0x64; __pyx_t_2+=1) {
+  for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "crossword.pyx":46
- *     rows = ["","","","","","","","","",""]
- *     for i in range(100):
- *         rows[board[i].row] += board[i].value + " "             # <<<<<<<<<<<<<<
+    /* "crossword.pyx":43
+ * 	rows = ["","","","","","","","","",""]
+ * 	for i in range(10):
+ * 		for j in range(10):             # <<<<<<<<<<<<<<
+ * 			rows[j] += board[i][j].value + " "
  * 
- *     for i in range(10):
  */
-    __pyx_t_3 = (__pyx_v_board[__pyx_v_i]).row;
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_t_3, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyBytes_FromString((__pyx_v_board[__pyx_v_i]).value); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyNumber_Add(__pyx_t_4, __pyx_kp_s__7); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_rows, __pyx_t_3, __pyx_t_4, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    for (__pyx_t_3 = 0; __pyx_t_3 < 10; __pyx_t_3+=1) {
+      __pyx_v_j = __pyx_t_3;
+
+      /* "crossword.pyx":44
+ * 	for i in range(10):
+ * 		for j in range(10):
+ * 			rows[j] += board[i][j].value + " "             # <<<<<<<<<<<<<<
+ * 
+ * 	for i in range(10):
+ */
+      __pyx_t_4 = __pyx_v_j;
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_t_4, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_5 = __Pyx_PyBytes_FromString(((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_kp_s__7); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_6); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_rows, __pyx_t_4, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
   }
 
-  /* "crossword.pyx":48
- *         rows[board[i].row] += board[i].value + " "
+  /* "crossword.pyx":46
+ * 			rows[j] += board[i][j].value + " "
  * 
- *     for i in range(10):             # <<<<<<<<<<<<<<
- *         print(rows[i] + "\n")
+ * 	for i in range(10):             # <<<<<<<<<<<<<<
+ * 		print(rows[i] + "\n")
  * cdef int main():
  */
   for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "crossword.pyx":49
+    /* "crossword.pyx":47
  * 
- *     for i in range(10):
- *         print(rows[i] + "\n")             # <<<<<<<<<<<<<<
+ * 	for i in range(10):
+ * 		print(rows[i] + "\n")             # <<<<<<<<<<<<<<
  * cdef int main():
- *     cdef spaces *board = makeBoard()
+ * 	cdef spaces board[10][10]
  */
-    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_v_i, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyNumber_Add(__pyx_t_4, __pyx_kp_s__8); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_v_i, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (__Pyx_PrintOne(0, __pyx_t_5) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_kp_s__8); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (__Pyx_PrintOne(0, __pyx_t_6) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
 
-  /* "crossword.pyx":43
+  /* "crossword.pyx":40
+ *     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
  *     # Randomly assign thw fillIns and then the chars
- *     return board
- * cdef void printBoard(spaces* board):             # <<<<<<<<<<<<<<
- *     rows = ["","","","","","","","","",""]
- *     for i in range(100):
+ * cdef void printBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
+ * 	rows = ["","","","","","","","","",""]
+ * 	for i in range(10):
  */
 
   /* function exit code */
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_WriteUnraisable("crossword.printBoard", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_rows);
   __Pyx_RefNannyFinishContext();
 }
 
-/* "crossword.pyx":50
- *     for i in range(10):
- *         print(rows[i] + "\n")
+/* "crossword.pyx":48
+ * 	for i in range(10):
+ * 		print(rows[i] + "\n")
  * cdef int main():             # <<<<<<<<<<<<<<
- *     cdef spaces *board = makeBoard()
- *     printBoard(board)
+ * 	cdef spaces board[10][10]
+ * 	makeBoard(board)
  */
 
 static int __pyx_f_9crossword_main(void) {
-  __pyx_t_9crossword_spaces *__pyx_v_board;
+  __pyx_t_9crossword_spaces __pyx_v_board[10][10];
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("main", 0);
 
-  /* "crossword.pyx":51
- *         print(rows[i] + "\n")
+  /* "crossword.pyx":50
  * cdef int main():
- *     cdef spaces *board = makeBoard()             # <<<<<<<<<<<<<<
- *     printBoard(board)
- *     return 0
+ * 	cdef spaces board[10][10]
+ * 	makeBoard(board)             # <<<<<<<<<<<<<<
+ * 	printBoard(board)
+ * 	return 0
  */
-  __pyx_v_board = __pyx_f_9crossword_makeBoard();
+  __pyx_f_9crossword_makeBoard(__pyx_v_board);
 
-  /* "crossword.pyx":52
- * cdef int main():
- *     cdef spaces *board = makeBoard()
- *     printBoard(board)             # <<<<<<<<<<<<<<
- *     return 0
+  /* "crossword.pyx":51
+ * 	cdef spaces board[10][10]
+ * 	makeBoard(board)
+ * 	printBoard(board)             # <<<<<<<<<<<<<<
+ * 	return 0
  * main()
  */
   __pyx_f_9crossword_printBoard(__pyx_v_board);
 
-  /* "crossword.pyx":53
- *     cdef spaces *board = makeBoard()
- *     printBoard(board)
- *     return 0             # <<<<<<<<<<<<<<
+  /* "crossword.pyx":52
+ * 	makeBoard(board)
+ * 	printBoard(board)
+ * 	return 0             # <<<<<<<<<<<<<<
  * main()
  */
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "crossword.pyx":50
- *     for i in range(10):
- *         print(rows[i] + "\n")
+  /* "crossword.pyx":48
+ * 	for i in range(10):
+ * 		print(rows[i] + "\n")
  * cdef int main():             # <<<<<<<<<<<<<<
- *     cdef spaces *board = makeBoard()
- *     printBoard(board)
+ * 	cdef spaces board[10][10]
+ * 	makeBoard(board)
  */
 
   /* function exit code */
@@ -1699,7 +1670,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -1709,36 +1680,36 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "crossword.pyx":24
- *                 temp.row = y
- *                 temp.column = x
- *                 val = randint(1,10)             # <<<<<<<<<<<<<<
- *                 temp.charType = val
- *                 board[i] = temp
+  /* "crossword.pyx":21
+ * 			temp.row = y
+ * 			temp.column = x
+ * 			val = randint(1,10)             # <<<<<<<<<<<<<<
+ * 			temp.charType = val
+ * 			board[x][y] = temp
  */
-  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "crossword.pyx":30
- *     for i in range(100):
- *         if(board[i].charType < 9):
- *             val = randint(1,10)             # <<<<<<<<<<<<<<
- *             if(val < 8):
- *                 board[i].value = '_'
+  /* "crossword.pyx":27
+ * 		for j in range(10):
+ * 			if(board[i][j].charType < 9):
+ * 				val = randint(1,10)             # <<<<<<<<<<<<<<
+ * 				if(val < 8):
+ * 					board[i][j].value = '_'
  */
-  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "crossword.pyx":36
- *                 board[i].value = '#'
- *         else:
- *             index = randint(0,25)             # <<<<<<<<<<<<<<
- *             board[i].value = char[index]
- *     # We want to weight the fillIns more, so that they occur more often than the chars.
+  /* "crossword.pyx":33
+ * 					board[i][j].value = '#'
+ * 			else:
+ * 				index = randint(0,25)             # <<<<<<<<<<<<<<
+ * 				board[i][j].value = char[index]
+ * 
  */
-  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_25); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_25); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
   __Pyx_RefNannyFinishContext();
@@ -1893,9 +1864,9 @@ PyMODINIT_FUNC PyInit_crossword(void)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "crossword.pyx":54
- *     printBoard(board)
- *     return 0
+  /* "crossword.pyx":53
+ * 	printBoard(board)
+ * 	return 0
  * main()             # <<<<<<<<<<<<<<
  */
   __pyx_f_9crossword_main();
@@ -2831,32 +2802,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to int");
     return (int) -1;
-}
-
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
-    const int neg_one = (int) -1, const_zero = (int) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(int) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(int) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-        }
-    } else {
-        if (sizeof(int) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(int),
-                                     little, !is_unsigned);
-    }
 }
 
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
