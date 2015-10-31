@@ -6,16 +6,17 @@ from libc.stdlib cimport malloc, free
 cdef struct space:
     int row
     int column
-    char value
+    char* value
     int charType
 ctypedef space spaces
 
-def makeBoard():
+cdef spaces* makeBoard():
     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     fillIns = ['_', '#']
     cdef spaces *board = <spaces *>malloc(100*sizeof(spaces))
     cdef spaces temp
-    for i in range(100):
+    cdef int i = 0
+    while(i < 100):
         for x in range(10):
             for y in range(10):
                 temp.row = y
@@ -23,18 +24,31 @@ def makeBoard():
                 val = randint(1,10)
                 temp.charType = val
                 board[i] = temp
-        if(board[i].charType < 8):
-            board[i].charType = 0
-        else:
-            board[i].charType = 1
-                
+                i += 1
     for i in range(100):
-        printf("The value of space %d is: %d\n", i, board[i].charType)
+        if(board[i].charType < 9):
+            val = randint(1,10)
+            if(val < 8):
+                board[i].value = '_'
+            else:
+                board[i].value = '#'
+        else:
+            index = randint(0,25)
+            board[i].value = char[index]
     # We want to weight the fillIns more, so that they occur more often than the chars.
     # cdef struct for the board
     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
     # Randomly assign thw fillIns and then the chars
+    return board
+cdef void printBoard(spaces* board):
+    rows = ["","","","","","","","","",""]
+    for i in range(100):
+        rows[board[i].row] += board[i].value + " "
+        
+    for i in range(10):
+        print(rows[i] + "\n")
 cdef int main():
-    makeBoard()
+    cdef spaces *board = makeBoard()
+    printBoard(board)
     return 0
 main()
