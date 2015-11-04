@@ -9,9 +9,9 @@ cdef struct space:
     int column
     char* value
     int charType
-    int* horizontallist
-    int* verticallist
-    int* combinedlist
+    char* horizontallist   #words that work horizontally
+    char* verticallist     #words that work vertically
+    char* combinedlist     #word that work both ways
 
 ctypedef space spaces
 
@@ -73,19 +73,29 @@ def getalphabet(filename): #filename would be the sys dict's location
 
 cdef void solveboard(spaces board[][10]): #very much in progress
     size = 10
-    counts = 0
     countslist = []
     cdef char* blackSpace = "#"
-    for x in range(size):
-        for y in range(size):
-            if board[x][y].value != blackSpace:
-                counts += 1
-            else:
-                counts = 0
-        if(counts not in countslist):
-            countslist.append(counts)                                
+    cdef spaces boardRow[10]
+    for row in range(size):
+        rowString = "#"
+        boardRow = board[row]
+        for i in range(size):
+            val = boardRow[i].value
+            rowString += val
+        rowString += "#"
+        rowString = rowString.split('#')
+        for i in rowString:
+            if i == '':
+                rowString.remove(i)
+        for i in rowString:
+            if(len(i) not in countslist):
+                countslist.append(len(i))
+      #  if(counts not in countslist):
+       #     countslist.append(counts) 
+       # if(countsVert not in countslist):
+        #    countslist.append(countsVert)                               
     for y in countslist:
-        if y in range(0,2):
+        if not(y in range(3, 10)):
             board[0][0].value = "!"
 
 
@@ -122,28 +132,33 @@ cdef void makeBoard(spaces board[][10]):
             
     # We want to weight the fillIns more, so that they occur more often than the chars.
     # cdef struct for the board
-    # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
-    # Randomly assign thw fillIns and then the chars
 cdef void printBoard(spaces board[][10]):
     cdef int side = 10
     rows = ["","","","","","","","","",""]
     for i in range(side):
         for j in range(side):
-            rows[j] += board[i][j].value + " "
+            rows[i] += board[i][j].value + " "
         
     for i in range(side):
         print(rows[i] + "\n")
-cdef int main():
+cdef int main(int badCount):
+    if(badCount > 1200):
+        print("Avoiding seg fault, solvable board not found!")
+        return 0
     cdef int side = 10
     cdef spaces board[10][10]
     makeBoard(board)
-    printBoard(board)
     #lengthlist = lenlistmaker(board)
     solveboard(board)
     cdef char* errorChar = "!"
     if(board[0][0].value == errorChar):
-        main()
+         badCount += 1
+         printBoard(board)
+      #  main(badCount)
+    else:
+        printBoard(board)
     return 0
+cdef int badCount = 1
 lengthlist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
 transferfile("/usr/share/dict/words", lengthlist)
-main()
+main(badCount)
