@@ -480,7 +480,7 @@ struct __pyx_t_9crossword_space {
  * 	int charType
  * ctypedef space spaces             # <<<<<<<<<<<<<<
  * 
- * cdef void makeBoard(spaces board[][10]):
+ * 
  */
 typedef struct __pyx_t_9crossword_space __pyx_t_9crossword_spaces;
 
@@ -564,16 +564,91 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
-static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
-
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
 #else
 #define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
 #endif
 
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x02070000
+static CYTHON_INLINE PyObject* __Pyx_PyObject_LookupSpecial(PyObject* obj, PyObject* attr_name) {
+    PyObject *res;
+    PyTypeObject *tp = Py_TYPE(obj);
+#if PY_MAJOR_VERSION < 3
+    if (unlikely(PyInstance_Check(obj)))
+        return __Pyx_PyObject_GetAttrStr(obj, attr_name);
+#endif
+    res = _PyType_Lookup(tp, attr_name);
+    if (likely(res)) {
+        descrgetfunc f = Py_TYPE(res)->tp_descr_get;
+        if (!f) {
+            Py_INCREF(res);
+        } else {
+            res = f(res, obj, (PyObject *)tp);
+        }
+    } else {
+        PyErr_SetObject(PyExc_AttributeError, attr_name);
+    }
+    return res;
+}
+#else
+#define __Pyx_PyObject_LookupSpecial(o,n) __Pyx_PyObject_GetAttrStr(o,n)
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
+#else
+#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
+#endif
+
+static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* seq, int eq) {
+    int result = PySequence_Contains(seq, item);
+    return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
+}
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
+    PyListObject* L = (PyListObject*) list;
+    Py_ssize_t len = Py_SIZE(list);
+    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
+        Py_INCREF(x);
+        PyList_SET_ITEM(list, len, x);
+        Py_SIZE(list) = len+1;
+        return 0;
+    }
+    return PyList_Append(list, x);
+}
+#else
+#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
+#endif
+
+static CYTHON_INLINE void __Pyx_ExceptionSave(PyObject **type, PyObject **value, PyObject **tb);
+static void __Pyx_ExceptionReset(PyObject *type, PyObject *value, PyObject *tb);
+
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
+
 static CYTHON_INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb);
 static CYTHON_INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyObject **tb);
+
+#include <string.h>
+
+static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals);
+
+static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals);
+
+#if PY_MAJOR_VERSION >= 3
+#define __Pyx_PyString_Equals __Pyx_PyUnicode_Equals
+#else
+#define __Pyx_PyString_Equals __Pyx_PyBytes_Equals
+#endif
+
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
 
 static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
@@ -630,11 +705,9 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object);
 static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
-static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
-
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 static int __Pyx_Print(PyObject*, PyObject *, int);
 #if CYTHON_COMPILING_IN_PYPY || PY_MAJOR_VERSION >= 3
@@ -643,6 +716,10 @@ static PyObject* __pyx_print_kwargs = 0;
 #endif
 
 static int __Pyx_PrintOne(PyObject* stream, PyObject *o);
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
+static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
 
 static CYTHON_INLINE int __Pyx_StrEq(const char *, const char *);
 
@@ -665,8 +742,8 @@ static int __pyx_f_9crossword_main(void); /*proto*/
 int __pyx_module_is_main_crossword = 0;
 
 /* Implementation of 'crossword' */
+static PyObject *__pyx_builtin_open;
 static PyObject *__pyx_builtin_range;
-static char __pyx_k_[] = "_";
 static char __pyx_k_a[] = "a";
 static char __pyx_k_b[] = "b";
 static char __pyx_k_c[] = "c";
@@ -694,36 +771,64 @@ static char __pyx_k_x[] = "x";
 static char __pyx_k_y[] = "y";
 static char __pyx_k_z[] = "z";
 static char __pyx_k__2[] = "#";
-static char __pyx_k__6[] = "";
-static char __pyx_k__7[] = " ";
-static char __pyx_k__8[] = "\n";
-static char __pyx_k__9[] = "*";
+static char __pyx_k__3[] = "_";
+static char __pyx_k__7[] = "";
+static char __pyx_k__8[] = " ";
+static char __pyx_k__9[] = "\n";
+static char __pyx_k__10[] = "*";
 static char __pyx_k_end[] = "end";
+static char __pyx_k_exit[] = "__exit__";
 static char __pyx_k_file[] = "file";
 static char __pyx_k_main[] = "__main__";
 static char __pyx_k_math[] = "math";
+static char __pyx_k_open[] = "open";
+static char __pyx_k_read[] = "read";
+static char __pyx_k_side[] = "side";
 static char __pyx_k_test[] = "__test__";
+static char __pyx_k_board[] = "board";
+static char __pyx_k_enter[] = "__enter__";
 static char __pyx_k_print[] = "print";
 static char __pyx_k_range[] = "range";
+static char __pyx_k_value[] = "value";
+static char __pyx_k_counts[] = "counts";
 static char __pyx_k_import[] = "__import__";
 static char __pyx_k_random[] = "random";
 static char __pyx_k_randint[] = "randint";
-static PyObject *__pyx_n_s_;
+static char __pyx_k_alphabet[] = "alphabet";
+static char __pyx_k_filename[] = "filename";
+static char __pyx_k_crossword[] = "crossword";
+static char __pyx_k_findwords[] = "findwords";
+static char __pyx_k_rowstring[] = "rowstring";
+static char __pyx_k_countslist[] = "countslist";
+static char __pyx_k_getalphabet[] = "getalphabet";
+static char __pyx_k_home_roycroft16c_dataStructures[] = "/home/roycroft16c/dataStructuresIFinalProject/crossword.pyx";
+static PyObject *__pyx_n_s__10;
 static PyObject *__pyx_kp_s__2;
-static PyObject *__pyx_kp_s__6;
+static PyObject *__pyx_n_s__3;
 static PyObject *__pyx_kp_s__7;
 static PyObject *__pyx_kp_s__8;
-static PyObject *__pyx_n_s__9;
+static PyObject *__pyx_kp_s__9;
 static PyObject *__pyx_n_s_a;
+static PyObject *__pyx_n_s_alphabet;
 static PyObject *__pyx_n_s_b;
+static PyObject *__pyx_n_s_board;
 static PyObject *__pyx_n_s_c;
+static PyObject *__pyx_n_s_counts;
+static PyObject *__pyx_n_s_countslist;
+static PyObject *__pyx_n_s_crossword;
 static PyObject *__pyx_n_s_d;
 static PyObject *__pyx_n_s_e;
 static PyObject *__pyx_n_s_end;
+static PyObject *__pyx_n_s_enter;
+static PyObject *__pyx_n_s_exit;
 static PyObject *__pyx_n_s_f;
 static PyObject *__pyx_n_s_file;
+static PyObject *__pyx_n_s_filename;
+static PyObject *__pyx_n_s_findwords;
 static PyObject *__pyx_n_s_g;
+static PyObject *__pyx_n_s_getalphabet;
 static PyObject *__pyx_n_s_h;
+static PyObject *__pyx_kp_s_home_roycroft16c_dataStructures;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_j;
@@ -734,6 +839,7 @@ static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_math;
 static PyObject *__pyx_n_s_n;
 static PyObject *__pyx_n_s_o;
+static PyObject *__pyx_n_s_open;
 static PyObject *__pyx_n_s_p;
 static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_s_q;
@@ -741,63 +847,628 @@ static PyObject *__pyx_n_s_r;
 static PyObject *__pyx_n_s_randint;
 static PyObject *__pyx_n_s_random;
 static PyObject *__pyx_n_s_range;
+static PyObject *__pyx_n_s_read;
+static PyObject *__pyx_n_s_rowstring;
 static PyObject *__pyx_n_s_s;
+static PyObject *__pyx_n_s_side;
 static PyObject *__pyx_n_s_t;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_u;
 static PyObject *__pyx_n_s_v;
+static PyObject *__pyx_n_s_value;
 static PyObject *__pyx_n_s_w;
 static PyObject *__pyx_n_s_x;
 static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_z;
+static PyObject *__pyx_pf_9crossword_getalphabet(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_filename); /* proto */
+static PyObject *__pyx_pf_9crossword_2findwords(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_board); /* proto */
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
-static PyObject *__pyx_int_8;
 static PyObject *__pyx_int_10;
 static PyObject *__pyx_int_25;
-static PyObject *__pyx_tuple__3;
+static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__4;
 static PyObject *__pyx_tuple__5;
+static PyObject *__pyx_tuple__6;
+static PyObject *__pyx_tuple__11;
+static PyObject *__pyx_tuple__13;
+static PyObject *__pyx_codeobj__12;
+static PyObject *__pyx_codeobj__14;
 
-/* "crossword.pyx":13
- * ctypedef space spaces
+/* "crossword.pyx":14
+ * 
+ * 
+ * def getalphabet(filename): #filename would be the sys dict's location             # <<<<<<<<<<<<<<
+ * 	#We can borrow from or modify the C solution at the site below:
+ * 	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_9crossword_1getalphabet(PyObject *__pyx_self, PyObject *__pyx_v_filename); /*proto*/
+static PyMethodDef __pyx_mdef_9crossword_1getalphabet = {"getalphabet", (PyCFunction)__pyx_pw_9crossword_1getalphabet, METH_O, 0};
+static PyObject *__pyx_pw_9crossword_1getalphabet(PyObject *__pyx_self, PyObject *__pyx_v_filename) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("getalphabet (wrapper)", 0);
+  __pyx_r = __pyx_pf_9crossword_getalphabet(__pyx_self, ((PyObject *)__pyx_v_filename));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_9crossword_getalphabet(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_filename) {
+  PyObject *__pyx_v_alphabet = NULL;
+  PyObject *__pyx_v_f = NULL;
+  PyObject *__pyx_v_c = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  Py_ssize_t __pyx_t_9;
+  PyObject *(*__pyx_t_10)(PyObject *);
+  int __pyx_t_11;
+  int __pyx_t_12;
+  int __pyx_t_13;
+  PyObject *__pyx_t_14 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("getalphabet", 0);
+
+  /* "crossword.pyx":18
+ * 	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
+ * 	#nevermind. I think this is actually better:
+ * 	alphabet = []             # <<<<<<<<<<<<<<
+ * 	with open(filename) as f:
+ * 		for c in f.read():
+ */
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_alphabet = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "crossword.pyx":19
+ * 	#nevermind. I think this is actually better:
+ * 	alphabet = []
+ * 	with open(filename) as f:             # <<<<<<<<<<<<<<
+ * 		for c in f.read():
+ * 			if c not in alphabet:
+ */
+  /*with:*/ {
+    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_INCREF(__pyx_v_filename);
+    __Pyx_GIVEREF(__pyx_v_filename);
+    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_filename);
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_5 = NULL;
+    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_4))) {
+      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_5)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+        __Pyx_INCREF(__pyx_t_5);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_4, function);
+      }
+    }
+    if (__pyx_t_5) {
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    } else {
+      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    }
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_4 = __pyx_t_1;
+    __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    /*try:*/ {
+      {
+        __Pyx_ExceptionSave(&__pyx_t_6, &__pyx_t_7, &__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_6);
+        __Pyx_XGOTREF(__pyx_t_7);
+        __Pyx_XGOTREF(__pyx_t_8);
+        /*try:*/ {
+          __pyx_v_f = __pyx_t_4;
+          __pyx_t_4 = 0;
+
+          /* "crossword.pyx":20
+ * 	alphabet = []
+ * 	with open(filename) as f:
+ * 		for c in f.read():             # <<<<<<<<<<<<<<
+ * 			if c not in alphabet:
+ * 				alphabet.append(c)
+ */
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_read); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_1 = NULL;
+          if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_1)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+              __Pyx_INCREF(__pyx_t_1);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
+            }
+          }
+          if (__pyx_t_1) {
+            __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          } else {
+            __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+          }
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          if (likely(PyList_CheckExact(__pyx_t_4)) || PyTuple_CheckExact(__pyx_t_4)) {
+            __pyx_t_2 = __pyx_t_4; __Pyx_INCREF(__pyx_t_2); __pyx_t_9 = 0;
+            __pyx_t_10 = NULL;
+          } else {
+            __pyx_t_9 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_10 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+          }
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          for (;;) {
+            if (likely(!__pyx_t_10)) {
+              if (likely(PyList_CheckExact(__pyx_t_2))) {
+                if (__pyx_t_9 >= PyList_GET_SIZE(__pyx_t_2)) break;
+                #if CYTHON_COMPILING_IN_CPYTHON
+                __pyx_t_4 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_9); __Pyx_INCREF(__pyx_t_4); __pyx_t_9++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+                #else
+                __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+                __Pyx_GOTREF(__pyx_t_4);
+                #endif
+              } else {
+                if (__pyx_t_9 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
+                #if CYTHON_COMPILING_IN_CPYTHON
+                __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_9); __Pyx_INCREF(__pyx_t_4); __pyx_t_9++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+                #else
+                __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_9); __pyx_t_9++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+                __Pyx_GOTREF(__pyx_t_4);
+                #endif
+              }
+            } else {
+              __pyx_t_4 = __pyx_t_10(__pyx_t_2);
+              if (unlikely(!__pyx_t_4)) {
+                PyObject* exc_type = PyErr_Occurred();
+                if (exc_type) {
+                  if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+                  else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+                }
+                break;
+              }
+              __Pyx_GOTREF(__pyx_t_4);
+            }
+            __Pyx_XDECREF_SET(__pyx_v_c, __pyx_t_4);
+            __pyx_t_4 = 0;
+
+            /* "crossword.pyx":21
+ * 	with open(filename) as f:
+ * 		for c in f.read():
+ * 			if c not in alphabet:             # <<<<<<<<<<<<<<
+ * 				alphabet.append(c)
+ * 	return alphabet
+ */
+            __pyx_t_11 = (__Pyx_PySequence_ContainsTF(__pyx_v_c, __pyx_v_alphabet, Py_NE)); if (unlikely(__pyx_t_11 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+            __pyx_t_12 = (__pyx_t_11 != 0);
+            if (__pyx_t_12) {
+
+              /* "crossword.pyx":22
+ * 		for c in f.read():
+ * 			if c not in alphabet:
+ * 				alphabet.append(c)             # <<<<<<<<<<<<<<
+ * 	return alphabet
+ * 
+ */
+              __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_alphabet, __pyx_v_c); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L7_error;}
+
+              /* "crossword.pyx":21
+ * 	with open(filename) as f:
+ * 		for c in f.read():
+ * 			if c not in alphabet:             # <<<<<<<<<<<<<<
+ * 				alphabet.append(c)
+ * 	return alphabet
+ */
+            }
+
+            /* "crossword.pyx":20
+ * 	alphabet = []
+ * 	with open(filename) as f:
+ * 		for c in f.read():             # <<<<<<<<<<<<<<
+ * 			if c not in alphabet:
+ * 				alphabet.append(c)
+ */
+          }
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+          /* "crossword.pyx":19
+ * 	#nevermind. I think this is actually better:
+ * 	alphabet = []
+ * 	with open(filename) as f:             # <<<<<<<<<<<<<<
+ * 		for c in f.read():
+ * 			if c not in alphabet:
+ */
+        }
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        goto __pyx_L14_try_end;
+        __pyx_L7_error:;
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        /*except:*/ {
+          __Pyx_AddTraceback("crossword.getalphabet", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_2, &__pyx_t_4, &__pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L9_except_error;}
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_5 = PyTuple_Pack(3, __pyx_t_2, __pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L9_except_error;}
+          __Pyx_GOTREF(__pyx_t_5);
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L9_except_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          if (__pyx_t_12 < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L9_except_error;}
+          __pyx_t_11 = ((!(__pyx_t_12 != 0)) != 0);
+          if (__pyx_t_11) {
+            __Pyx_GIVEREF(__pyx_t_2);
+            __Pyx_GIVEREF(__pyx_t_4);
+            __Pyx_XGIVEREF(__pyx_t_1);
+            __Pyx_ErrRestore(__pyx_t_2, __pyx_t_4, __pyx_t_1);
+            __pyx_t_2 = 0; __pyx_t_4 = 0; __pyx_t_1 = 0; 
+            {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L9_except_error;}
+          }
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          goto __pyx_L8_exception_handled;
+        }
+        __pyx_L9_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+        goto __pyx_L1_error;
+        __pyx_L8_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ExceptionReset(__pyx_t_6, __pyx_t_7, __pyx_t_8);
+        __pyx_L14_try_end:;
+      }
+    }
+    /*finally:*/ {
+      /*normal exit:*/{
+        if (__pyx_t_3) {
+          __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple_, NULL);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+        }
+        goto __pyx_L6;
+      }
+      __pyx_L6:;
+    }
+    goto __pyx_L21;
+    __pyx_L3_error:;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    goto __pyx_L1_error;
+    __pyx_L21:;
+  }
+
+  /* "crossword.pyx":23
+ * 			if c not in alphabet:
+ * 				alphabet.append(c)
+ * 	return alphabet             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_alphabet);
+  __pyx_r = __pyx_v_alphabet;
+  goto __pyx_L0;
+
+  /* "crossword.pyx":14
+ * 
+ * 
+ * def getalphabet(filename): #filename would be the sys dict's location             # <<<<<<<<<<<<<<
+ * 	#We can borrow from or modify the C solution at the site below:
+ * 	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("crossword.getalphabet", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_alphabet);
+  __Pyx_XDECREF(__pyx_v_f);
+  __Pyx_XDECREF(__pyx_v_c);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "crossword.pyx":28
+ * 
+ * 
+ * def findwords(board): #is list the right return type here?             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
+ * 	cdef int counts
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_9crossword_3findwords(PyObject *__pyx_self, PyObject *__pyx_v_board); /*proto*/
+static PyMethodDef __pyx_mdef_9crossword_3findwords = {"findwords", (PyCFunction)__pyx_pw_9crossword_3findwords, METH_O, 0};
+static PyObject *__pyx_pw_9crossword_3findwords(PyObject *__pyx_self, PyObject *__pyx_v_board) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("findwords (wrapper)", 0);
+  __pyx_r = __pyx_pf_9crossword_2findwords(__pyx_self, ((PyObject *)__pyx_v_board));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_9crossword_2findwords(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_board) {
+  int __pyx_v_side;
+  int __pyx_v_counts;
+  PyObject *__pyx_v_countslist = NULL;
+  CYTHON_UNUSED int __pyx_v_x;
+  int __pyx_v_y;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  int __pyx_t_4;
+  int __pyx_t_5;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  int __pyx_t_8;
+  int __pyx_t_9;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("findwords", 0);
+
+  /* "crossword.pyx":29
+ * 
+ * def findwords(board): #is list the right return type here?
+ * 	cdef int side = 10             # <<<<<<<<<<<<<<
+ * 	cdef int counts
+ * 	countslist = []
+ */
+  __pyx_v_side = 10;
+
+  /* "crossword.pyx":31
+ * 	cdef int side = 10
+ * 	cdef int counts
+ * 	countslist = []             # <<<<<<<<<<<<<<
+ * 	cdef char rowstring[10]
+ * 	for x in range(side):
+ */
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_countslist = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "crossword.pyx":33
+ * 	countslist = []
+ * 	cdef char rowstring[10]
+ * 	for x in range(side):             # <<<<<<<<<<<<<<
+ * 		for y in range(side):
+ * 			if y.value != '#':
+ */
+  __pyx_t_2 = __pyx_v_side;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_x = __pyx_t_3;
+
+    /* "crossword.pyx":34
+ * 	cdef char rowstring[10]
+ * 	for x in range(side):
+ * 		for y in range(side):             # <<<<<<<<<<<<<<
+ * 			if y.value != '#':
+ * 				counts = counts + 1
+ */
+    __pyx_t_4 = __pyx_v_side;
+    for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
+      __pyx_v_y = __pyx_t_5;
+
+      /* "crossword.pyx":35
+ * 	for x in range(side):
+ * 		for y in range(side):
+ * 			if y.value != '#':             # <<<<<<<<<<<<<<
+ * 				counts = counts + 1
+ * 			else:
+ */
+      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_y); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_value); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_7 = (__Pyx_PyString_Equals(__pyx_t_6, __pyx_kp_s__2, Py_NE)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (__pyx_t_7) {
+
+        /* "crossword.pyx":36
+ * 		for y in range(side):
+ * 			if y.value != '#':
+ * 				counts = counts + 1             # <<<<<<<<<<<<<<
+ * 			else:
+ * 				if counts not in countslist:
+ */
+        __pyx_v_counts = (__pyx_v_counts + 1);
+
+        /* "crossword.pyx":35
+ * 	for x in range(side):
+ * 		for y in range(side):
+ * 			if y.value != '#':             # <<<<<<<<<<<<<<
+ * 				counts = counts + 1
+ * 			else:
+ */
+        goto __pyx_L7;
+      }
+
+      /* "crossword.pyx":38
+ * 				counts = counts + 1
+ * 			else:
+ * 				if counts not in countslist:             # <<<<<<<<<<<<<<
+ * 					countslist.append(counts)
+ * 					counts = 0
+ */
+      /*else*/ {
+        __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_counts); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_6);
+        __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_t_6, __pyx_v_countslist, Py_NE)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __pyx_t_8 = (__pyx_t_7 != 0);
+        if (__pyx_t_8) {
+
+          /* "crossword.pyx":39
+ * 			else:
+ * 				if counts not in countslist:
+ * 					countslist.append(counts)             # <<<<<<<<<<<<<<
+ * 					counts = 0
+ * 	return countslist
+ */
+          __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_counts); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_6);
+          __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_countslist, __pyx_t_6); if (unlikely(__pyx_t_9 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+          /* "crossword.pyx":40
+ * 				if counts not in countslist:
+ * 					countslist.append(counts)
+ * 					counts = 0             # <<<<<<<<<<<<<<
+ * 	return countslist
+ * 		#Ignore these:
+ */
+          __pyx_v_counts = 0;
+
+          /* "crossword.pyx":38
+ * 				counts = counts + 1
+ * 			else:
+ * 				if counts not in countslist:             # <<<<<<<<<<<<<<
+ * 					countslist.append(counts)
+ * 					counts = 0
+ */
+        }
+      }
+      __pyx_L7:;
+    }
+  }
+
+  /* "crossword.pyx":41
+ * 					countslist.append(counts)
+ * 					counts = 0
+ * 	return countslist             # <<<<<<<<<<<<<<
+ * 		#Ignore these:
+ * 		#temparray = board[x]
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_countslist);
+  __pyx_r = __pyx_v_countslist;
+  goto __pyx_L0;
+
+  /* "crossword.pyx":28
+ * 
+ * 
+ * def findwords(board): #is list the right return type here?             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
+ * 	cdef int counts
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("crossword.findwords", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_countslist);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "crossword.pyx":48
+ * 
  * 
  * cdef void makeBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
- * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
- * 	fillIns = ['_', '#']
+ * 	cdef int side = 10
+ * 	chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  */
 
 static void __pyx_f_9crossword_makeBoard(__pyx_t_9crossword_spaces (*__pyx_v_board)[10]) {
-  PyObject *__pyx_v_char = NULL;
+  int __pyx_v_side;
+  PyObject *__pyx_v_chars = NULL;
   CYTHON_UNUSED PyObject *__pyx_v_fillIns = NULL;
   __pyx_t_9crossword_spaces __pyx_v_temp;
-  long __pyx_v_x;
-  long __pyx_v_y;
+  int __pyx_v_x;
+  int __pyx_v_y;
   PyObject *__pyx_v_val = NULL;
-  long __pyx_v_i;
-  long __pyx_v_j;
+  int __pyx_v_noncharprob;
+  int __pyx_v_blankprob;
+  int __pyx_v_i;
+  int __pyx_v_j;
   PyObject *__pyx_v_index = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  long __pyx_t_2;
-  long __pyx_t_3;
-  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  int __pyx_t_4;
   int __pyx_t_5;
-  int __pyx_t_6;
-  char *__pyx_t_7;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  int __pyx_t_8;
+  char *__pyx_t_9;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("makeBoard", 0);
 
-  /* "crossword.pyx":14
+  /* "crossword.pyx":49
  * 
  * cdef void makeBoard(spaces board[][10]):
- * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']             # <<<<<<<<<<<<<<
- * 	fillIns = ['_', '#']
- * 	cdef spaces temp
+ * 	cdef int side = 10             # <<<<<<<<<<<<<<
+ * 	chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+ * 	#I think we can replace char with getalphabet applied to the sys dict
  */
-  __pyx_t_1 = PyList_New(26); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_side = 10;
+
+  /* "crossword.pyx":50
+ * cdef void makeBoard(spaces board[][10]):
+ * 	cdef int side = 10
+ * 	chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']             # <<<<<<<<<<<<<<
+ * 	#I think we can replace char with getalphabet applied to the sys dict
+ * 	fillIns = ['_', '#']
+ */
+  __pyx_t_1 = PyList_New(26); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_a);
   __Pyx_GIVEREF(__pyx_n_s_a);
@@ -877,58 +1548,60 @@ static void __pyx_f_9crossword_makeBoard(__pyx_t_9crossword_spaces (*__pyx_v_boa
   __Pyx_INCREF(__pyx_n_s_z);
   __Pyx_GIVEREF(__pyx_n_s_z);
   PyList_SET_ITEM(__pyx_t_1, 25, __pyx_n_s_z);
-  __pyx_v_char = ((PyObject*)__pyx_t_1);
+  __pyx_v_chars = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "crossword.pyx":15
- * cdef void makeBoard(spaces board[][10]):
- * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+  /* "crossword.pyx":52
+ * 	chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+ * 	#I think we can replace char with getalphabet applied to the sys dict
  * 	fillIns = ['_', '#']             # <<<<<<<<<<<<<<
  * 	cdef spaces temp
- * 	for x in range(10):
+ * 	for x in range(side):
  */
-  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s_);
-  __Pyx_GIVEREF(__pyx_n_s_);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_);
+  __Pyx_INCREF(__pyx_n_s__3);
+  __Pyx_GIVEREF(__pyx_n_s__3);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s__3);
   __Pyx_INCREF(__pyx_kp_s__2);
   __Pyx_GIVEREF(__pyx_kp_s__2);
   PyList_SET_ITEM(__pyx_t_1, 1, __pyx_kp_s__2);
   __pyx_v_fillIns = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "crossword.pyx":17
+  /* "crossword.pyx":54
  * 	fillIns = ['_', '#']
  * 	cdef spaces temp
- * 	for x in range(10):             # <<<<<<<<<<<<<<
- * 		for y in range(10):
+ * 	for x in range(side):             # <<<<<<<<<<<<<<
+ * 		for y in range(side):
  * 			temp.row = y
  */
-  for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
-    __pyx_v_x = __pyx_t_2;
+  __pyx_t_2 = __pyx_v_side;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_x = __pyx_t_3;
 
-    /* "crossword.pyx":18
+    /* "crossword.pyx":55
  * 	cdef spaces temp
- * 	for x in range(10):
- * 		for y in range(10):             # <<<<<<<<<<<<<<
+ * 	for x in range(side):
+ * 		for y in range(side):             # <<<<<<<<<<<<<<
  * 			temp.row = y
  * 			temp.column = x
  */
-    for (__pyx_t_3 = 0; __pyx_t_3 < 10; __pyx_t_3+=1) {
-      __pyx_v_y = __pyx_t_3;
+    __pyx_t_4 = __pyx_v_side;
+    for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
+      __pyx_v_y = __pyx_t_5;
 
-      /* "crossword.pyx":19
- * 	for x in range(10):
- * 		for y in range(10):
+      /* "crossword.pyx":56
+ * 	for x in range(side):
+ * 		for y in range(side):
  * 			temp.row = y             # <<<<<<<<<<<<<<
  * 			temp.column = x
  * 			val = randint(1,10)
  */
       __pyx_v_temp.row = __pyx_v_y;
 
-      /* "crossword.pyx":20
- * 		for y in range(10):
+      /* "crossword.pyx":57
+ * 		for y in range(side):
  * 			temp.row = y
  * 			temp.column = x             # <<<<<<<<<<<<<<
  * 			val = randint(1,10)
@@ -936,119 +1609,142 @@ static void __pyx_f_9crossword_makeBoard(__pyx_t_9crossword_spaces (*__pyx_v_boa
  */
       __pyx_v_temp.column = __pyx_v_x;
 
-      /* "crossword.pyx":21
+      /* "crossword.pyx":58
  * 			temp.row = y
  * 			temp.column = x
  * 			val = randint(1,10)             # <<<<<<<<<<<<<<
  * 			temp.charType = val
  * 			board[x][y] = temp
  */
-      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_4);
-      __pyx_t_4 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_6);
+      __pyx_t_6 = 0;
 
-      /* "crossword.pyx":22
+      /* "crossword.pyx":59
  * 			temp.column = x
  * 			val = randint(1,10)
  * 			temp.charType = val             # <<<<<<<<<<<<<<
  * 			board[x][y] = temp
- * 	for i in range(10):
+ * 	cdef int noncharprob = 9
  */
-      __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_v_val); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __pyx_v_temp.charType = __pyx_t_5;
+      __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_v_val); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 59; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_v_temp.charType = __pyx_t_7;
 
-      /* "crossword.pyx":23
+      /* "crossword.pyx":60
  * 			val = randint(1,10)
  * 			temp.charType = val
  * 			board[x][y] = temp             # <<<<<<<<<<<<<<
- * 	for i in range(10):
- * 		for j in range(10):
+ * 	cdef int noncharprob = 9
+ * 	cdef int blankprob = 8
  */
       ((__pyx_v_board[__pyx_v_x])[__pyx_v_y]) = __pyx_v_temp;
     }
   }
 
-  /* "crossword.pyx":24
+  /* "crossword.pyx":61
  * 			temp.charType = val
  * 			board[x][y] = temp
- * 	for i in range(10):             # <<<<<<<<<<<<<<
- * 		for j in range(10):
- * 			if(board[i][j].charType < 9):
+ * 	cdef int noncharprob = 9             # <<<<<<<<<<<<<<
+ * 	cdef int blankprob = 8
+ * 	for i in range(side):
  */
-  for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
-    __pyx_v_i = __pyx_t_2;
+  __pyx_v_noncharprob = 9;
 
-    /* "crossword.pyx":25
+  /* "crossword.pyx":62
  * 			board[x][y] = temp
- * 	for i in range(10):
- * 		for j in range(10):             # <<<<<<<<<<<<<<
- * 			if(board[i][j].charType < 9):
+ * 	cdef int noncharprob = 9
+ * 	cdef int blankprob = 8             # <<<<<<<<<<<<<<
+ * 	for i in range(side):
+ * 		for j in range(side):
+ */
+  __pyx_v_blankprob = 8;
+
+  /* "crossword.pyx":63
+ * 	cdef int noncharprob = 9
+ * 	cdef int blankprob = 8
+ * 	for i in range(side):             # <<<<<<<<<<<<<<
+ * 		for j in range(side):
+ * 			if(board[i][j].charType < noncharprob):
+ */
+  __pyx_t_2 = __pyx_v_side;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "crossword.pyx":64
+ * 	cdef int blankprob = 8
+ * 	for i in range(side):
+ * 		for j in range(side):             # <<<<<<<<<<<<<<
+ * 			if(board[i][j].charType < noncharprob):
  * 				val = randint(1,10)
  */
-    for (__pyx_t_3 = 0; __pyx_t_3 < 10; __pyx_t_3+=1) {
-      __pyx_v_j = __pyx_t_3;
+    __pyx_t_4 = __pyx_v_side;
+    for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
+      __pyx_v_j = __pyx_t_5;
 
-      /* "crossword.pyx":26
- * 	for i in range(10):
- * 		for j in range(10):
- * 			if(board[i][j].charType < 9):             # <<<<<<<<<<<<<<
+      /* "crossword.pyx":65
+ * 	for i in range(side):
+ * 		for j in range(side):
+ * 			if(board[i][j].charType < noncharprob):             # <<<<<<<<<<<<<<
  * 				val = randint(1,10)
- * 				if(val < 8):
+ * 				if(val < blankprob):
  */
-      __pyx_t_6 = ((((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).charType < 9) != 0);
-      if (__pyx_t_6) {
+      __pyx_t_8 = ((((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).charType < __pyx_v_noncharprob) != 0);
+      if (__pyx_t_8) {
 
-        /* "crossword.pyx":27
- * 		for j in range(10):
- * 			if(board[i][j].charType < 9):
+        /* "crossword.pyx":66
+ * 		for j in range(side):
+ * 			if(board[i][j].charType < noncharprob):
  * 				val = randint(1,10)             # <<<<<<<<<<<<<<
- * 				if(val < 8):
+ * 				if(val < blankprob):
  * 					board[i][j].value = '_'
  */
-        __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_6);
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_XDECREF_SET(__pyx_v_val, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "crossword.pyx":28
- * 			if(board[i][j].charType < 9):
+        /* "crossword.pyx":67
+ * 			if(board[i][j].charType < noncharprob):
  * 				val = randint(1,10)
- * 				if(val < 8):             # <<<<<<<<<<<<<<
+ * 				if(val < blankprob):             # <<<<<<<<<<<<<<
  * 					board[i][j].value = '_'
  * 				else:
  */
-        __pyx_t_1 = PyObject_RichCompare(__pyx_v_val, __pyx_int_8, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_blankprob); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_6 = PyObject_RichCompare(__pyx_v_val, __pyx_t_1, Py_LT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (__pyx_t_6) {
+        __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_8 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        if (__pyx_t_8) {
 
-          /* "crossword.pyx":29
+          /* "crossword.pyx":68
  * 				val = randint(1,10)
- * 				if(val < 8):
+ * 				if(val < blankprob):
  * 					board[i][j].value = '_'             # <<<<<<<<<<<<<<
  * 				else:
  * 					board[i][j].value = '#'
  */
-          ((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value = __pyx_k_;
+          ((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value = __pyx_k__3;
 
-          /* "crossword.pyx":28
- * 			if(board[i][j].charType < 9):
+          /* "crossword.pyx":67
+ * 			if(board[i][j].charType < noncharprob):
  * 				val = randint(1,10)
- * 				if(val < 8):             # <<<<<<<<<<<<<<
+ * 				if(val < blankprob):             # <<<<<<<<<<<<<<
  * 					board[i][j].value = '_'
  * 				else:
  */
           goto __pyx_L12;
         }
 
-        /* "crossword.pyx":31
+        /* "crossword.pyx":70
  * 					board[i][j].value = '_'
  * 				else:
  * 					board[i][j].value = '#'             # <<<<<<<<<<<<<<
@@ -1060,243 +1756,268 @@ static void __pyx_f_9crossword_makeBoard(__pyx_t_9crossword_spaces (*__pyx_v_boa
         }
         __pyx_L12:;
 
-        /* "crossword.pyx":26
- * 	for i in range(10):
- * 		for j in range(10):
- * 			if(board[i][j].charType < 9):             # <<<<<<<<<<<<<<
+        /* "crossword.pyx":65
+ * 	for i in range(side):
+ * 		for j in range(side):
+ * 			if(board[i][j].charType < noncharprob):             # <<<<<<<<<<<<<<
  * 				val = randint(1,10)
- * 				if(val < 8):
+ * 				if(val < blankprob):
  */
         goto __pyx_L11;
       }
 
-      /* "crossword.pyx":33
+      /* "crossword.pyx":72
  * 					board[i][j].value = '#'
  * 			else:
  * 				index = randint(0,25)             # <<<<<<<<<<<<<<
- * 				board[i][j].value = char[index]
+ * 				board[i][j].value = chars[index]
  * 
  */
       /*else*/ {
-        __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_randint); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_6);
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_index, __pyx_t_4);
-        __pyx_t_4 = 0;
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_index, __pyx_t_1);
+        __pyx_t_1 = 0;
 
-        /* "crossword.pyx":34
+        /* "crossword.pyx":73
  * 			else:
  * 				index = randint(0,25)
- * 				board[i][j].value = char[index]             # <<<<<<<<<<<<<<
+ * 				board[i][j].value = chars[index]             # <<<<<<<<<<<<<<
  * 
  *     # We want to weight the fillIns more, so that they occur more often than the chars.
  */
-        __pyx_t_4 = PyObject_GetItem(__pyx_v_char, __pyx_v_index); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_t_4); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        ((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value = __pyx_t_7;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __pyx_t_1 = PyObject_GetItem(__pyx_v_chars, __pyx_v_index); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_9 = __Pyx_PyObject_AsString(__pyx_t_1); if (unlikely((!__pyx_t_9) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        ((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value = __pyx_t_9;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
       __pyx_L11:;
     }
   }
 
-  /* "crossword.pyx":13
- * ctypedef space spaces
+  /* "crossword.pyx":48
+ * 
  * 
  * cdef void makeBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
- * 	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
- * 	fillIns = ['_', '#']
+ * 	cdef int side = 10
+ * 	chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
  */
 
   /* function exit code */
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_WriteUnraisable("crossword.makeBoard", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_char);
+  __Pyx_XDECREF(__pyx_v_chars);
   __Pyx_XDECREF(__pyx_v_fillIns);
   __Pyx_XDECREF(__pyx_v_val);
   __Pyx_XDECREF(__pyx_v_index);
   __Pyx_RefNannyFinishContext();
 }
 
-/* "crossword.pyx":40
+/* "crossword.pyx":79
  *     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
  *     # Randomly assign thw fillIns and then the chars
  * cdef void printBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
  * 	rows = ["","","","","","","","","",""]
- * 	for i in range(10):
  */
 
 static void __pyx_f_9crossword_printBoard(__pyx_t_9crossword_spaces (*__pyx_v_board)[10]) {
+  int __pyx_v_side;
   PyObject *__pyx_v_rows = NULL;
-  long __pyx_v_i;
-  long __pyx_v_j;
+  int __pyx_v_i;
+  int __pyx_v_j;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  long __pyx_t_2;
-  long __pyx_t_3;
-  long __pyx_t_4;
-  PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  int __pyx_t_4;
+  int __pyx_t_5;
+  int __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("printBoard", 0);
 
-  /* "crossword.pyx":41
+  /* "crossword.pyx":80
  *     # Randomly assign thw fillIns and then the chars
  * cdef void printBoard(spaces board[][10]):
- * 	rows = ["","","","","","","","","",""]             # <<<<<<<<<<<<<<
- * 	for i in range(10):
- * 		for j in range(10):
+ * 	cdef int side = 10             # <<<<<<<<<<<<<<
+ * 	rows = ["","","","","","","","","",""]
+ * 	for i in range(side):
  */
-  __pyx_t_1 = PyList_New(10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_side = 10;
+
+  /* "crossword.pyx":81
+ * cdef void printBoard(spaces board[][10]):
+ * 	cdef int side = 10
+ * 	rows = ["","","","","","","","","",""]             # <<<<<<<<<<<<<<
+ * 	for i in range(side):
+ * 		for j in range(side):
+ */
+  __pyx_t_1 = PyList_New(10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 1, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 2, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 3, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 4, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 5, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 6, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 7, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 8, __pyx_kp_s__6);
-  __Pyx_INCREF(__pyx_kp_s__6);
-  __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 9, __pyx_kp_s__6);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 1, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 2, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 3, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 4, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 5, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 6, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 7, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 8, __pyx_kp_s__7);
+  __Pyx_INCREF(__pyx_kp_s__7);
+  __Pyx_GIVEREF(__pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 9, __pyx_kp_s__7);
   __pyx_v_rows = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "crossword.pyx":42
- * cdef void printBoard(spaces board[][10]):
+  /* "crossword.pyx":82
+ * 	cdef int side = 10
  * 	rows = ["","","","","","","","","",""]
- * 	for i in range(10):             # <<<<<<<<<<<<<<
- * 		for j in range(10):
+ * 	for i in range(side):             # <<<<<<<<<<<<<<
+ * 		for j in range(side):
  * 			rows[j] += board[i][j].value + " "
  */
-  for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
-    __pyx_v_i = __pyx_t_2;
+  __pyx_t_2 = __pyx_v_side;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
 
-    /* "crossword.pyx":43
+    /* "crossword.pyx":83
  * 	rows = ["","","","","","","","","",""]
- * 	for i in range(10):
- * 		for j in range(10):             # <<<<<<<<<<<<<<
+ * 	for i in range(side):
+ * 		for j in range(side):             # <<<<<<<<<<<<<<
  * 			rows[j] += board[i][j].value + " "
  * 
  */
-    for (__pyx_t_3 = 0; __pyx_t_3 < 10; __pyx_t_3+=1) {
-      __pyx_v_j = __pyx_t_3;
+    __pyx_t_4 = __pyx_v_side;
+    for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
+      __pyx_v_j = __pyx_t_5;
 
-      /* "crossword.pyx":44
- * 	for i in range(10):
- * 		for j in range(10):
+      /* "crossword.pyx":84
+ * 	for i in range(side):
+ * 		for j in range(side):
  * 			rows[j] += board[i][j].value + " "             # <<<<<<<<<<<<<<
  * 
- * 	for i in range(10):
+ * 	for i in range(side):
  */
-      __pyx_t_4 = __pyx_v_j;
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_t_4, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+      __pyx_t_6 = __pyx_v_j;
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_t_6, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = __Pyx_PyBytes_FromString(((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_kp_s__7); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_6); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_7 = __Pyx_PyBytes_FromString(((__pyx_v_board[__pyx_v_i])[__pyx_v_j]).value); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_8 = PyNumber_Add(__pyx_t_7, __pyx_kp_s__8); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_rows, __pyx_t_4, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_rows, __pyx_t_6, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
   }
 
-  /* "crossword.pyx":46
+  /* "crossword.pyx":86
  * 			rows[j] += board[i][j].value + " "
  * 
- * 	for i in range(10):             # <<<<<<<<<<<<<<
+ * 	for i in range(side):             # <<<<<<<<<<<<<<
  * 		print(rows[i] + "\n")
  * cdef int main():
  */
-  for (__pyx_t_2 = 0; __pyx_t_2 < 10; __pyx_t_2+=1) {
-    __pyx_v_i = __pyx_t_2;
+  __pyx_t_2 = __pyx_v_side;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
 
-    /* "crossword.pyx":47
+    /* "crossword.pyx":87
  * 
- * 	for i in range(10):
+ * 	for i in range(side):
  * 		print(rows[i] + "\n")             # <<<<<<<<<<<<<<
  * cdef int main():
- * 	cdef spaces board[10][10]
+ * 	cdef int side = 10
  */
-    __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_v_i, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyNumber_Add(__pyx_t_5, __pyx_kp_s__8); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (__Pyx_PrintOne(0, __pyx_t_6) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_rows, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(__pyx_t_7 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_8 = PyNumber_Add(__pyx_t_7, __pyx_kp_s__9); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    if (__Pyx_PrintOne(0, __pyx_t_8) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
 
-  /* "crossword.pyx":40
+  /* "crossword.pyx":79
  *     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
  *     # Randomly assign thw fillIns and then the chars
  * cdef void printBoard(spaces board[][10]):             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
  * 	rows = ["","","","","","","","","",""]
- * 	for i in range(10):
  */
 
   /* function exit code */
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_WriteUnraisable("crossword.printBoard", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_rows);
   __Pyx_RefNannyFinishContext();
 }
 
-/* "crossword.pyx":48
- * 	for i in range(10):
+/* "crossword.pyx":88
+ * 	for i in range(side):
  * 		print(rows[i] + "\n")
  * cdef int main():             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
  * 	cdef spaces board[10][10]
- * 	makeBoard(board)
  */
 
 static int __pyx_f_9crossword_main(void) {
+  CYTHON_UNUSED int __pyx_v_side;
   __pyx_t_9crossword_spaces __pyx_v_board[10][10];
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("main", 0);
 
-  /* "crossword.pyx":50
+  /* "crossword.pyx":89
+ * 		print(rows[i] + "\n")
  * cdef int main():
+ * 	cdef int side = 10             # <<<<<<<<<<<<<<
+ * 	cdef spaces board[10][10]
+ * 	makeBoard(board)
+ */
+  __pyx_v_side = 10;
+
+  /* "crossword.pyx":91
+ * 	cdef int side = 10
  * 	cdef spaces board[10][10]
  * 	makeBoard(board)             # <<<<<<<<<<<<<<
  * 	printBoard(board)
@@ -1304,7 +2025,7 @@ static int __pyx_f_9crossword_main(void) {
  */
   __pyx_f_9crossword_makeBoard(__pyx_v_board);
 
-  /* "crossword.pyx":51
+  /* "crossword.pyx":92
  * 	cdef spaces board[10][10]
  * 	makeBoard(board)
  * 	printBoard(board)             # <<<<<<<<<<<<<<
@@ -1313,7 +2034,7 @@ static int __pyx_f_9crossword_main(void) {
  */
   __pyx_f_9crossword_printBoard(__pyx_v_board);
 
-  /* "crossword.pyx":52
+  /* "crossword.pyx":93
  * 	makeBoard(board)
  * 	printBoard(board)
  * 	return 0             # <<<<<<<<<<<<<<
@@ -1322,12 +2043,12 @@ static int __pyx_f_9crossword_main(void) {
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "crossword.pyx":48
- * 	for i in range(10):
+  /* "crossword.pyx":88
+ * 	for i in range(side):
  * 		print(rows[i] + "\n")
  * cdef int main():             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
  * 	cdef spaces board[10][10]
- * 	makeBoard(board)
  */
 
   /* function exit code */
@@ -1343,10 +2064,10 @@ static PyMethodDef __pyx_methods[] = {
 static int __pyx_import_star_set(PyObject *o, PyObject* py_name, char *name) {
   static const char* internal_type_names[] = {
     "FILE",
-    "__pyx_ctuple_long",
+    "__pyx_ctuple_int",
+    "__pyx_ctuple_int_struct",
     "__pyx_ctuple_long__and_long",
     "__pyx_ctuple_long__and_long_struct",
-    "__pyx_ctuple_long_struct",
     "const_char",
     "const_fpos_t",
     "const_void",
@@ -1625,22 +2346,33 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_n_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 1},
+  {&__pyx_n_s__10, __pyx_k__10, sizeof(__pyx_k__10), 0, 0, 1, 1},
   {&__pyx_kp_s__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 1, 0},
-  {&__pyx_kp_s__6, __pyx_k__6, sizeof(__pyx_k__6), 0, 0, 1, 0},
+  {&__pyx_n_s__3, __pyx_k__3, sizeof(__pyx_k__3), 0, 0, 1, 1},
   {&__pyx_kp_s__7, __pyx_k__7, sizeof(__pyx_k__7), 0, 0, 1, 0},
   {&__pyx_kp_s__8, __pyx_k__8, sizeof(__pyx_k__8), 0, 0, 1, 0},
-  {&__pyx_n_s__9, __pyx_k__9, sizeof(__pyx_k__9), 0, 0, 1, 1},
+  {&__pyx_kp_s__9, __pyx_k__9, sizeof(__pyx_k__9), 0, 0, 1, 0},
   {&__pyx_n_s_a, __pyx_k_a, sizeof(__pyx_k_a), 0, 0, 1, 1},
+  {&__pyx_n_s_alphabet, __pyx_k_alphabet, sizeof(__pyx_k_alphabet), 0, 0, 1, 1},
   {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
+  {&__pyx_n_s_board, __pyx_k_board, sizeof(__pyx_k_board), 0, 0, 1, 1},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
+  {&__pyx_n_s_counts, __pyx_k_counts, sizeof(__pyx_k_counts), 0, 0, 1, 1},
+  {&__pyx_n_s_countslist, __pyx_k_countslist, sizeof(__pyx_k_countslist), 0, 0, 1, 1},
+  {&__pyx_n_s_crossword, __pyx_k_crossword, sizeof(__pyx_k_crossword), 0, 0, 1, 1},
   {&__pyx_n_s_d, __pyx_k_d, sizeof(__pyx_k_d), 0, 0, 1, 1},
   {&__pyx_n_s_e, __pyx_k_e, sizeof(__pyx_k_e), 0, 0, 1, 1},
   {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
+  {&__pyx_n_s_enter, __pyx_k_enter, sizeof(__pyx_k_enter), 0, 0, 1, 1},
+  {&__pyx_n_s_exit, __pyx_k_exit, sizeof(__pyx_k_exit), 0, 0, 1, 1},
   {&__pyx_n_s_f, __pyx_k_f, sizeof(__pyx_k_f), 0, 0, 1, 1},
   {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
+  {&__pyx_n_s_filename, __pyx_k_filename, sizeof(__pyx_k_filename), 0, 0, 1, 1},
+  {&__pyx_n_s_findwords, __pyx_k_findwords, sizeof(__pyx_k_findwords), 0, 0, 1, 1},
   {&__pyx_n_s_g, __pyx_k_g, sizeof(__pyx_k_g), 0, 0, 1, 1},
+  {&__pyx_n_s_getalphabet, __pyx_k_getalphabet, sizeof(__pyx_k_getalphabet), 0, 0, 1, 1},
   {&__pyx_n_s_h, __pyx_k_h, sizeof(__pyx_k_h), 0, 0, 1, 1},
+  {&__pyx_kp_s_home_roycroft16c_dataStructures, __pyx_k_home_roycroft16c_dataStructures, sizeof(__pyx_k_home_roycroft16c_dataStructures), 0, 0, 1, 0},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_j, __pyx_k_j, sizeof(__pyx_k_j), 0, 0, 1, 1},
@@ -1651,6 +2383,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_math, __pyx_k_math, sizeof(__pyx_k_math), 0, 0, 1, 1},
   {&__pyx_n_s_n, __pyx_k_n, sizeof(__pyx_k_n), 0, 0, 1, 1},
   {&__pyx_n_s_o, __pyx_k_o, sizeof(__pyx_k_o), 0, 0, 1, 1},
+  {&__pyx_n_s_open, __pyx_k_open, sizeof(__pyx_k_open), 0, 0, 1, 1},
   {&__pyx_n_s_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 0, 1, 1},
   {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_s_q, __pyx_k_q, sizeof(__pyx_k_q), 0, 0, 1, 1},
@@ -1658,11 +2391,15 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_randint, __pyx_k_randint, sizeof(__pyx_k_randint), 0, 0, 1, 1},
   {&__pyx_n_s_random, __pyx_k_random, sizeof(__pyx_k_random), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
+  {&__pyx_n_s_read, __pyx_k_read, sizeof(__pyx_k_read), 0, 0, 1, 1},
+  {&__pyx_n_s_rowstring, __pyx_k_rowstring, sizeof(__pyx_k_rowstring), 0, 0, 1, 1},
   {&__pyx_n_s_s, __pyx_k_s, sizeof(__pyx_k_s), 0, 0, 1, 1},
+  {&__pyx_n_s_side, __pyx_k_side, sizeof(__pyx_k_side), 0, 0, 1, 1},
   {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_u, __pyx_k_u, sizeof(__pyx_k_u), 0, 0, 1, 1},
   {&__pyx_n_s_v, __pyx_k_v, sizeof(__pyx_k_v), 0, 0, 1, 1},
+  {&__pyx_n_s_value, __pyx_k_value, sizeof(__pyx_k_value), 0, 0, 1, 1},
   {&__pyx_n_s_w, __pyx_k_w, sizeof(__pyx_k_w), 0, 0, 1, 1},
   {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
   {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
@@ -1670,7 +2407,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -1680,38 +2418,73 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "crossword.pyx":21
+  /* "crossword.pyx":19
+ * 	#nevermind. I think this is actually better:
+ * 	alphabet = []
+ * 	with open(filename) as f:             # <<<<<<<<<<<<<<
+ * 		for c in f.read():
+ * 			if c not in alphabet:
+ */
+  __pyx_tuple_ = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple_);
+  __Pyx_GIVEREF(__pyx_tuple_);
+
+  /* "crossword.pyx":58
  * 			temp.row = y
  * 			temp.column = x
  * 			val = randint(1,10)             # <<<<<<<<<<<<<<
  * 			temp.charType = val
  * 			board[x][y] = temp
  */
-  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 21; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
-
-  /* "crossword.pyx":27
- * 		for j in range(10):
- * 			if(board[i][j].charType < 9):
- * 				val = randint(1,10)             # <<<<<<<<<<<<<<
- * 				if(val < 8):
- * 					board[i][j].value = '_'
- */
-  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "crossword.pyx":33
+  /* "crossword.pyx":66
+ * 		for j in range(side):
+ * 			if(board[i][j].charType < noncharprob):
+ * 				val = randint(1,10)             # <<<<<<<<<<<<<<
+ * 				if(val < blankprob):
+ * 					board[i][j].value = '_'
+ */
+  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_10); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
+
+  /* "crossword.pyx":72
  * 					board[i][j].value = '#'
  * 			else:
  * 				index = randint(0,25)             # <<<<<<<<<<<<<<
- * 				board[i][j].value = char[index]
+ * 				board[i][j].value = chars[index]
  * 
  */
-  __pyx_tuple__5 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_25); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_25); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
+
+  /* "crossword.pyx":14
+ * 
+ * 
+ * def getalphabet(filename): #filename would be the sys dict's location             # <<<<<<<<<<<<<<
+ * 	#We can borrow from or modify the C solution at the site below:
+ * 	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
+ */
+  __pyx_tuple__11 = PyTuple_Pack(4, __pyx_n_s_filename, __pyx_n_s_alphabet, __pyx_n_s_f, __pyx_n_s_c); if (unlikely(!__pyx_tuple__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_roycroft16c_dataStructures, __pyx_n_s_getalphabet, 14, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "crossword.pyx":28
+ * 
+ * 
+ * def findwords(board): #is list the right return type here?             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
+ * 	cdef int counts
+ */
+  __pyx_tuple__13 = PyTuple_Pack(7, __pyx_n_s_board, __pyx_n_s_side, __pyx_n_s_counts, __pyx_n_s_countslist, __pyx_n_s_rowstring, __pyx_n_s_x, __pyx_n_s_y); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_tuple__13);
+  __Pyx_GIVEREF(__pyx_tuple__13);
+  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 7, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_roycroft16c_dataStructures, __pyx_n_s_findwords, 28, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -1723,7 +2496,6 @@ static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_int_8 = PyInt_FromLong(8); if (unlikely(!__pyx_int_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_int_10 = PyInt_FromLong(10); if (unlikely(!__pyx_int_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_int_25 = PyInt_FromLong(25); if (unlikely(!__pyx_int_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
@@ -1834,9 +2606,9 @@ PyMODINIT_FUNC PyInit_crossword(void)
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s__9);
-  __Pyx_GIVEREF(__pyx_n_s__9);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s__9);
+  __Pyx_INCREF(__pyx_n_s__10);
+  __Pyx_GIVEREF(__pyx_n_s__10);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s__10);
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_math, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 2; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -1864,7 +2636,31 @@ PyMODINIT_FUNC PyInit_crossword(void)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "crossword.pyx":53
+  /* "crossword.pyx":14
+ * 
+ * 
+ * def getalphabet(filename): #filename would be the sys dict's location             # <<<<<<<<<<<<<<
+ * 	#We can borrow from or modify the C solution at the site below:
+ * 	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9crossword_1getalphabet, NULL, __pyx_n_s_crossword); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_getalphabet, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "crossword.pyx":28
+ * 
+ * 
+ * def findwords(board): #is list the right return type here?             # <<<<<<<<<<<<<<
+ * 	cdef int side = 10
+ * 	cdef int counts
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9crossword_3findwords, NULL, __pyx_n_s_crossword); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_findwords, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "crossword.pyx":94
  * 	printBoard(board)
  * 	return 0
  * main()             # <<<<<<<<<<<<<<
@@ -1934,23 +2730,6 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
     return result;
 }
 
-static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
-    PyObject *result;
-#if CYTHON_COMPILING_IN_CPYTHON
-    result = PyDict_GetItem(__pyx_d, name);
-    if (likely(result)) {
-        Py_INCREF(result);
-    } else {
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    if (!result) {
-        PyErr_Clear();
-#endif
-        result = __Pyx_GetBuiltinName(name);
-    }
-    return result;
-}
-
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
     PyObject *result;
@@ -1969,6 +2748,162 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
     return result;
 }
 #endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
+    PyObject *self, *result;
+    PyCFunction cfunc;
+    cfunc = PyCFunction_GET_FUNCTION(func);
+    self = PyCFunction_GET_SELF(func);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = cfunc(self, arg);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
+}
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static PyObject* __Pyx__PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_New(1);
+    if (unlikely(!args)) return NULL;
+    Py_INCREF(arg);
+    PyTuple_SET_ITEM(args, 0, arg);
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+#ifdef __Pyx_CyFunction_USED
+    if (likely(PyCFunction_Check(func) || PyObject_TypeCheck(func, __pyx_CyFunctionType))) {
+#else
+    if (likely(PyCFunction_Check(func))) {
+#endif
+        if (likely(PyCFunction_GET_FLAGS(func) & METH_O)) {
+            return __Pyx_PyObject_CallMethO(func, arg);
+        }
+    }
+    return __Pyx__PyObject_CallOneArg(func, arg);
+}
+#else
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_Pack(1, arg);
+    if (unlikely(!args)) return NULL;
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
+#ifdef __Pyx_CyFunction_USED
+    if (likely(PyCFunction_Check(func) || PyObject_TypeCheck(func, __pyx_CyFunctionType))) {
+#else
+    if (likely(PyCFunction_Check(func))) {
+#endif
+        if (likely(PyCFunction_GET_FLAGS(func) & METH_NOARGS)) {
+            return __Pyx_PyObject_CallMethO(func, NULL);
+        }
+    }
+    return __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL);
+}
+#endif
+
+static CYTHON_INLINE void __Pyx_ExceptionSave(PyObject **type, PyObject **value, PyObject **tb) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyThreadState *tstate = PyThreadState_GET();
+    *type = tstate->exc_type;
+    *value = tstate->exc_value;
+    *tb = tstate->exc_traceback;
+    Py_XINCREF(*type);
+    Py_XINCREF(*value);
+    Py_XINCREF(*tb);
+#else
+    PyErr_GetExcInfo(type, value, tb);
+#endif
+}
+static void __Pyx_ExceptionReset(PyObject *type, PyObject *value, PyObject *tb) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyThreadState *tstate = PyThreadState_GET();
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = type;
+    tstate->exc_value = value;
+    tstate->exc_traceback = tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_SetExcInfo(type, value, tb);
+#endif
+}
+
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) {
+    PyObject *local_type, *local_value, *local_tb;
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyThreadState *tstate = PyThreadState_GET();
+    local_type = tstate->curexc_type;
+    local_value = tstate->curexc_value;
+    local_tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+#else
+    PyErr_Fetch(&local_type, &local_value, &local_tb);
+#endif
+    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (unlikely(tstate->curexc_type))
+#else
+    if (unlikely(PyErr_Occurred()))
+#endif
+        goto bad;
+    #if PY_MAJOR_VERSION >= 3
+    if (local_tb) {
+        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
+            goto bad;
+    }
+    #endif
+    Py_XINCREF(local_tb);
+    Py_XINCREF(local_type);
+    Py_XINCREF(local_value);
+    *type = local_type;
+    *value = local_value;
+    *tb = local_tb;
+#if CYTHON_COMPILING_IN_CPYTHON
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = local_type;
+    tstate->exc_value = local_value;
+    tstate->exc_traceback = local_tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_SetExcInfo(local_type, local_value, local_tb);
+#endif
+    return 0;
+bad:
+    *type = 0;
+    *value = 0;
+    *tb = 0;
+    Py_XDECREF(local_type);
+    Py_XDECREF(local_value);
+    Py_XDECREF(local_tb);
+    return -1;
+}
 
 static CYTHON_INLINE void __Pyx_ErrRestore(PyObject *type, PyObject *value, PyObject *tb) {
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -1999,6 +2934,143 @@ static CYTHON_INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyOb
 #else
     PyErr_Fetch(type, value, tb);
 #endif
+}
+
+static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
+#if CYTHON_COMPILING_IN_PYPY
+    return PyObject_RichCompareBool(s1, s2, equals);
+#else
+    if (s1 == s2) {
+        return (equals == Py_EQ);
+    } else if (PyBytes_CheckExact(s1) & PyBytes_CheckExact(s2)) {
+        const char *ps1, *ps2;
+        Py_ssize_t length = PyBytes_GET_SIZE(s1);
+        if (length != PyBytes_GET_SIZE(s2))
+            return (equals == Py_NE);
+        ps1 = PyBytes_AS_STRING(s1);
+        ps2 = PyBytes_AS_STRING(s2);
+        if (ps1[0] != ps2[0]) {
+            return (equals == Py_NE);
+        } else if (length == 1) {
+            return (equals == Py_EQ);
+        } else {
+            int result = memcmp(ps1, ps2, (size_t)length);
+            return (equals == Py_EQ) ? (result == 0) : (result != 0);
+        }
+    } else if ((s1 == Py_None) & PyBytes_CheckExact(s2)) {
+        return (equals == Py_NE);
+    } else if ((s2 == Py_None) & PyBytes_CheckExact(s1)) {
+        return (equals == Py_NE);
+    } else {
+        int result;
+        PyObject* py_result = PyObject_RichCompare(s1, s2, equals);
+        if (!py_result)
+            return -1;
+        result = __Pyx_PyObject_IsTrue(py_result);
+        Py_DECREF(py_result);
+        return result;
+    }
+#endif
+}
+
+static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals) {
+#if CYTHON_COMPILING_IN_PYPY
+    return PyObject_RichCompareBool(s1, s2, equals);
+#else
+#if PY_MAJOR_VERSION < 3
+    PyObject* owned_ref = NULL;
+#endif
+    int s1_is_unicode, s2_is_unicode;
+    if (s1 == s2) {
+        goto return_eq;
+    }
+    s1_is_unicode = PyUnicode_CheckExact(s1);
+    s2_is_unicode = PyUnicode_CheckExact(s2);
+#if PY_MAJOR_VERSION < 3
+    if ((s1_is_unicode & (!s2_is_unicode)) && PyString_CheckExact(s2)) {
+        owned_ref = PyUnicode_FromObject(s2);
+        if (unlikely(!owned_ref))
+            return -1;
+        s2 = owned_ref;
+        s2_is_unicode = 1;
+    } else if ((s2_is_unicode & (!s1_is_unicode)) && PyString_CheckExact(s1)) {
+        owned_ref = PyUnicode_FromObject(s1);
+        if (unlikely(!owned_ref))
+            return -1;
+        s1 = owned_ref;
+        s1_is_unicode = 1;
+    } else if (((!s2_is_unicode) & (!s1_is_unicode))) {
+        return __Pyx_PyBytes_Equals(s1, s2, equals);
+    }
+#endif
+    if (s1_is_unicode & s2_is_unicode) {
+        Py_ssize_t length;
+        int kind;
+        void *data1, *data2;
+        if (unlikely(__Pyx_PyUnicode_READY(s1) < 0) || unlikely(__Pyx_PyUnicode_READY(s2) < 0))
+            return -1;
+        length = __Pyx_PyUnicode_GET_LENGTH(s1);
+        if (length != __Pyx_PyUnicode_GET_LENGTH(s2)) {
+            goto return_ne;
+        }
+        kind = __Pyx_PyUnicode_KIND(s1);
+        if (kind != __Pyx_PyUnicode_KIND(s2)) {
+            goto return_ne;
+        }
+        data1 = __Pyx_PyUnicode_DATA(s1);
+        data2 = __Pyx_PyUnicode_DATA(s2);
+        if (__Pyx_PyUnicode_READ(kind, data1, 0) != __Pyx_PyUnicode_READ(kind, data2, 0)) {
+            goto return_ne;
+        } else if (length == 1) {
+            goto return_eq;
+        } else {
+            int result = memcmp(data1, data2, (size_t)(length * kind));
+            #if PY_MAJOR_VERSION < 3
+            Py_XDECREF(owned_ref);
+            #endif
+            return (equals == Py_EQ) ? (result == 0) : (result != 0);
+        }
+    } else if ((s1 == Py_None) & s2_is_unicode) {
+        goto return_ne;
+    } else if ((s2 == Py_None) & s1_is_unicode) {
+        goto return_ne;
+    } else {
+        int result;
+        PyObject* py_result = PyObject_RichCompare(s1, s2, equals);
+        if (!py_result)
+            return -1;
+        result = __Pyx_PyObject_IsTrue(py_result);
+        Py_DECREF(py_result);
+        return result;
+    }
+return_eq:
+    #if PY_MAJOR_VERSION < 3
+    Py_XDECREF(owned_ref);
+    #endif
+    return (equals == Py_EQ);
+return_ne:
+    #if PY_MAJOR_VERSION < 3
+    Py_XDECREF(owned_ref);
+    #endif
+    return (equals == Py_NE);
+#endif
+}
+
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
+    PyObject *result;
+#if CYTHON_COMPILING_IN_CPYTHON
+    result = PyDict_GetItem(__pyx_d, name);
+    if (likely(result)) {
+        Py_INCREF(result);
+    } else {
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    if (!result) {
+        PyErr_Clear();
+#endif
+        result = __Pyx_GetBuiltinName(name);
+    }
+    return result;
 }
 
 static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
@@ -2411,6 +3483,32 @@ bad:
     Py_XDECREF(py_frame);
 }
 
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    const int neg_one = (int) -1, const_zero = (int) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(int) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+        }
+    } else {
+        if (sizeof(int) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(int),
+                                     little, !is_unsigned);
+    }
+}
+
 #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 0)
 #define __PYX_VERIFY_RETURN_INT_EXC(target_type, func_type, func_value)\
@@ -2435,190 +3533,6 @@ bad:
 #if CYTHON_USE_PYLONG_INTERNALS
   #include "longintrepr.h"
 #endif
-
-static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-#if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_Check(x))) {
-        if (sizeof(long) < sizeof(long)) {
-            __PYX_VERIFY_RETURN_INT(long, long, PyInt_AS_LONG(x))
-        } else {
-            long val = PyInt_AS_LONG(x);
-            if (is_unsigned && unlikely(val < 0)) {
-                goto raise_neg_overflow;
-            }
-            return (long) val;
-        }
-    } else
-#endif
-    if (likely(PyLong_Check(x))) {
-        if (is_unsigned) {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (long) 0;
-                case  1: __PYX_VERIFY_RETURN_INT(long, digit, digits[0])
-                case 2:
-                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) >= 2 * PyLong_SHIFT) {
-                            return (long) (((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) >= 3 * PyLong_SHIFT) {
-                            return (long) (((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) >= 4 * PyLong_SHIFT) {
-                            return (long) (((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
-                        }
-                    }
-                    break;
-            }
-#endif
-#if CYTHON_COMPILING_IN_CPYTHON
-            if (unlikely(Py_SIZE(x) < 0)) {
-                goto raise_neg_overflow;
-            }
-#else
-            {
-                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
-                if (unlikely(result < 0))
-                    return (long) -1;
-                if (unlikely(result == 1))
-                    goto raise_neg_overflow;
-            }
-#endif
-            if (sizeof(long) <= sizeof(unsigned long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned long, PyLong_AsUnsignedLong(x))
-            } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
-            }
-        } else {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (long) 0;
-                case -1: __PYX_VERIFY_RETURN_INT(long, sdigit, -(sdigit) digits[0])
-                case  1: __PYX_VERIFY_RETURN_INT(long,  digit, +digits[0])
-                case -2:
-                    if (8 * sizeof(long) - 1 > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                            return (long) (((long)-1)*(((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case 2:
-                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                            return (long) ((((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case -3:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                            return (long) (((long)-1)*(((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                            return (long) ((((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case -4:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                            return (long) (((long)-1)*(((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                            return (long) ((((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-            }
-#endif
-            if (sizeof(long) <= sizeof(long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, long, PyLong_AsLong(x))
-            } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, PY_LONG_LONG, PyLong_AsLongLong(x))
-            }
-        }
-        {
-#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
-            PyErr_SetString(PyExc_RuntimeError,
-                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
-#else
-            long val;
-            PyObject *v = __Pyx_PyNumber_Int(x);
- #if PY_MAJOR_VERSION < 3
-            if (likely(v) && !PyLong_Check(v)) {
-                PyObject *tmp = v;
-                v = PyNumber_Long(tmp);
-                Py_DECREF(tmp);
-            }
- #endif
-            if (likely(v)) {
-                int one = 1; int is_little = (int)*(unsigned char *)&one;
-                unsigned char *bytes = (unsigned char *)&val;
-                int ret = _PyLong_AsByteArray((PyLongObject *)v,
-                                              bytes, sizeof(val),
-                                              is_little, !is_unsigned);
-                Py_DECREF(v);
-                if (likely(!ret))
-                    return val;
-            }
-#endif
-            return (long) -1;
-        }
-    } else {
-        long val;
-        PyObject *tmp = __Pyx_PyNumber_Int(x);
-        if (!tmp) return (long) -1;
-        val = __Pyx_PyInt_As_long(tmp);
-        Py_DECREF(tmp);
-        return val;
-    }
-raise_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "value too large to convert to long");
-    return (long) -1;
-raise_neg_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "can't convert negative value to long");
-    return (long) -1;
-}
 
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
     const int neg_one = (int) -1, const_zero = (int) 0;
@@ -2804,32 +3718,6 @@ raise_neg_overflow:
     return (int) -1;
 }
 
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-        }
-    } else {
-        if (sizeof(long) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
-                                     little, !is_unsigned);
-    }
-}
-
 #if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
 static PyObject *__Pyx_GetStdout(void) {
     PyObject *f = PySys_GetObject((char *)"stdout");
@@ -2970,6 +3858,216 @@ static int __Pyx_PrintOne(PyObject* stream, PyObject *o) {
     return res;
 }
 #endif
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
+
+static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(long) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(long, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (long) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (long) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(long, digit, digits[0])
+                case 2:
+                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) >= 2 * PyLong_SHIFT) {
+                            return (long) (((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) >= 3 * PyLong_SHIFT) {
+                            return (long) (((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) >= 4 * PyLong_SHIFT) {
+                            return (long) (((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
+                        }
+                    }
+                    break;
+            }
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (long) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(long) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned long, PyLong_AsUnsignedLong(x))
+            } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+            }
+        } else {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (long) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(long, sdigit, -(sdigit) digits[0])
+                case  1: __PYX_VERIFY_RETURN_INT(long,  digit, +digits[0])
+                case -2:
+                    if (8 * sizeof(long) - 1 > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                            return (long) (((long)-1)*(((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                            return (long) ((((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
+                        }
+                    }
+                    break;
+                case -3:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                            return (long) (((long)-1)*(((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                            return (long) ((((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
+                        }
+                    }
+                    break;
+                case -4:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                            return (long) (((long)-1)*(((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                            return (long) ((((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
+                        }
+                    }
+                    break;
+            }
+#endif
+            if (sizeof(long) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, long, PyLong_AsLong(x))
+            } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, PY_LONG_LONG, PyLong_AsLongLong(x))
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            long val;
+            PyObject *v = __Pyx_PyNumber_Int(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (long) -1;
+        }
+    } else {
+        long val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (long) -1;
+        val = __Pyx_PyInt_As_long(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to long");
+    return (long) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to long");
+    return (long) -1;
+}
 
 static CYTHON_INLINE int __Pyx_StrEq(const char *s1, const char *s2) {
     while (*s1 != '\0' && *s1 == *s2) { s1++; s2++; }

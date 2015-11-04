@@ -10,42 +10,83 @@ cdef struct space:
 	int charType
 ctypedef space spaces
 
+
+def getalphabet(filename): #filename would be the sys dict's location
+	#We can borrow from or modify the C solution at the site below:
+	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
+	#nevermind. I think this is actually better:
+	alphabet = []
+	with open(filename) as f:
+		for c in f.read():
+			if c not in alphabet:
+				alphabet.append(c)
+	return alphabet
+
+
+
+
+def findwords(board): #is list the right return type here?
+	cdef int side = 10
+	cdef int counts
+	countslist = []
+	cdef char rowstring[10]
+	for x in range(side):
+		for y in range(side):
+			if y.value != '#':
+				counts = counts + 1
+			else:
+				if counts not in countslist:
+					countslist.append(counts)
+					counts = 0
+	return countslist
+		#Ignore these:
+		#temparray = board[x]
+		#memcpy(rowstring,temparray,side) #converting each row of the board into a string
+
+
+
 cdef void makeBoard(spaces board[][10]):
-	char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+	cdef int side = 10
+	chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+	#I think we can replace char with getalphabet applied to the sys dict
 	fillIns = ['_', '#']
 	cdef spaces temp
-	for x in range(10):
-		for y in range(10):
+	for x in range(side):
+		for y in range(side):
 			temp.row = y
 			temp.column = x
 			val = randint(1,10)
 			temp.charType = val
 			board[x][y] = temp
-	for i in range(10):
-		for j in range(10):
-			if(board[i][j].charType < 9):
+	cdef int noncharprob = 9
+	cdef int blankprob = 8
+	for i in range(side):
+		for j in range(side):
+			if(board[i][j].charType < noncharprob):
 				val = randint(1,10)
-				if(val < 8):
+				if(val < blankprob):
 					board[i][j].value = '_'
 				else:
 					board[i][j].value = '#'
 			else:
 				index = randint(0,25)
-				board[i][j].value = char[index]
+				board[i][j].value = chars[index]
 			
     # We want to weight the fillIns more, so that they occur more often than the chars.
     # cdef struct for the board
     # use random Integer to determine whether each space is char or fillIn (10% or 20% char?).
     # Randomly assign thw fillIns and then the chars
 cdef void printBoard(spaces board[][10]):
+	cdef int side = 10
 	rows = ["","","","","","","","","",""]
-	for i in range(10):
-		for j in range(10):
+	for i in range(side):
+		for j in range(side):
 			rows[j] += board[i][j].value + " "
         
-	for i in range(10):
+	for i in range(side):
 		print(rows[i] + "\n")
 cdef int main():
+	cdef int side = 10
 	cdef spaces board[10][10]
 	makeBoard(board)
 	printBoard(board)
