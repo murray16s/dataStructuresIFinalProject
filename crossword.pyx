@@ -1,3 +1,4 @@
+import os
 from libc.stdio cimport *
 from math import *
 from random import randint
@@ -8,6 +9,7 @@ cdef struct space:
 	int column
 	char* value
 	int charType
+	
 ctypedef space spaces
 
 cdef int contains(int field[], int query):
@@ -15,16 +17,70 @@ cdef int contains(int field[], int query):
 		if(field[i] == query):
 			return 1
 	return 0
+
+def lenlistmaker(board[10][]):
+	size = 10
+	counts = 0
+	countslist = []
+	for x in range(size):
+		for y in range(size):
+			if board[x][y].value != '#':
+				counts + = 1
+				if (counts not in countslist):
+					countslist.append(counts)
+	for y in countslist:
+		if y in range(0,2):
+			countslist.remove(y)
+	return countslist
+
+
+def transferfile(location,lengthlist):
+	blacklist = [chr(39), chr(146), "-", ".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+	lengthlist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+	os.system("cp " + location + " ./words")
+	with open("words") as f:
+		lines = f.readlines()
+		goodLines = []
+		for line in lines:
+			isBlacklisted = False
+			for c in line:
+#				#if((c in blacklist) or (len(line) <= 3) or (len(line) > 11)):
+				if((c in blacklist) or ((len(line) + 1) not in lengthlist)):
+					isBlacklisted = True
+			if(isBlacklisted == False):
+				goodLines.append(line)
+	with open("temp", "w") as f:
+		for line in goodLines:
+			f.write(line) 
+	os.system("mv temp words")
+
+
 def getalphabet(filename): #filename would be the sys dict's location
-	#We can borrow from or modify the C solution at the site below:
-	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
-	#nevermind. I think this is actually better:
 	alphabet = []
 	with open(filename) as f:
 		for c in f.read():
 			if c not in alphabet:
 				alphabet.append(c)
 	return alphabet
+
+cdef solveboard(board[][10]): #very much in progress
+	size = 10
+        counts = 0
+        countslist = []
+        for x in range(size):
+                for y in range(size):
+                        if board[x][y].value != '#':
+                                counts + = 1
+                                        
+        for y in countslist:
+                if y in range(0,2):
+                        countslist.remove(y)
+        return countslist
+
+	
+	return
+
+
 
 cdef void makeBoard(spaces board[][10]):
 	cdef int side = 10
@@ -73,5 +129,11 @@ cdef int main():
 	cdef spaces board[10][10]
 	makeBoard(board)
 	printBoard(board)
+	#for i in lenlistmaker(board):
+	#	print(i)
+	#lengthlist = lenlistmaker(board)
+	lengthlist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+	#transferfile("/usr/share/dict/words")
+	#os.system("rm temp")
 	return 0
 main()
