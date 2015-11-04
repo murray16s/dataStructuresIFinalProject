@@ -10,7 +10,11 @@ cdef struct space:
 	int charType
 ctypedef space spaces
 
-
+cdef int contains(int field[], int query):
+	for i in range(sizeof(field)/sizeof(int)):
+		if(field[i] == query):
+			return 1
+	return 0
 def getalphabet(filename): #filename would be the sys dict's location
 	#We can borrow from or modify the C solution at the site below:
 	#http://stackoverflow.com/questions/387623/find-unique-characters-in-a-file
@@ -22,33 +26,12 @@ def getalphabet(filename): #filename would be the sys dict's location
 				alphabet.append(c)
 	return alphabet
 
-
-
-
-def findwords(board): #is list the right return type here?
-	cdef int side = 10
-	cdef int counts
-	countslist = []
-	cdef char rowstring[10]
-	for x in range(side):
-		for y in range(side):
-			if y.value != '#':
-				counts = counts + 1
-			else:
-				if counts not in countslist:
-					countslist.append(counts)
-					counts = 0
-	return countslist
-		#Ignore these:
-		#temparray = board[x]
-		#memcpy(rowstring,temparray,side) #converting each row of the board into a string
-
-
-
 cdef void makeBoard(spaces board[][10]):
 	cdef int side = 10
 	chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',' k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 	#I think we can replace char with getalphabet applied to the sys dict
+	filename = "/usr/share/dict/words"
+	#chars = getalphabet(filename)
 	fillIns = ['_', '#']
 	cdef spaces temp
 	for x in range(side):
